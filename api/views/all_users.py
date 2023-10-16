@@ -15,7 +15,7 @@ class AllUsersView(APIView):
         all_user_details = UserServices().get_all_users_service()
         if all_user_details and isinstance(all_user_details, ExportECOMUserList):
             return Response(
-                data={"data": all_user_details.dict(), "errorMessage": None},
+                data={"data": all_user_details.model_dump(), "errorMessage": None},
                 status=status.HTTP_200_OK,
                 content_type="application/json",
             )
