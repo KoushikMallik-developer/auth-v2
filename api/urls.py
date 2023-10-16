@@ -6,6 +6,7 @@ from api.views.create_user import CreateUsersView
 urlpatterns = [
     path("all-users", AllUsersView.as_view(), name="All-Users"),
     path("create-users", CreateUsersView.as_view(), name="Create-Users"),
+    # path("send-email", EmailSenderView.as_view(), name="Send-Email"),
 ]
 # path('login', UserLoginView.as_view(), name="User Login"),
 # path('profile', UserProfileView.as_view(), name="User Profile"),
