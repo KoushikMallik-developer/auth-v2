@@ -58,12 +58,12 @@ class UserServices:
 
         # Name and Username Validation
         if (
-                fname
-                and lname
-                and username
-                and isinstance(fname, str)
-                and isinstance(lname, str)
-                and isinstance(username, str)
+            fname
+            and lname
+            and username
+            and isinstance(fname, str)
+            and isinstance(lname, str)
+            and isinstance(username, str)
         ):
             validation_result_name: ValidationResult = validate_name(fname + lname)
             is_validated_name = validation_result_name.is_validated
@@ -85,10 +85,10 @@ class UserServices:
                 }
         # Password Validation
         if (
-                password1
-                and password2
-                and isinstance(password1, str)
-                and isinstance(password2, str)
+            password1
+            and password2
+            and isinstance(password1, str)
+            and isinstance(password2, str)
         ):
             validation_result_password: ValidationResult = validate_password(
                 password1, password2
@@ -103,10 +103,10 @@ class UserServices:
                 }
 
         if (
-                is_validated_email
-                and is_validated_password
-                and is_validated_username
-                and is_validated_name
+            is_validated_email
+            and is_validated_password
+            and is_validated_username
+            and is_validated_name
         ):
             # Creating ECOMUser Object
             user = ECOMUser(
