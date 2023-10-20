@@ -2,10 +2,12 @@ from django.urls import path
 
 from api.views.all_users import AllUsersView
 from api.views.create_user import CreateUsersView
+from api.views.sign_in import SignInView
 
 urlpatterns = [
     path("all-users", AllUsersView.as_view(), name="All-Users"),
     path("create-users", CreateUsersView.as_view(), name="Create-Users"),
+    path("sign-in", SignInView.as_view(), name="sign-in"),
 ]
 # path('login', UserLoginView.as_view(), name="User Login"),
 # path('profile', UserProfileView.as_view(), name="User Profile"),
