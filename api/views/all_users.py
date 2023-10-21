@@ -5,7 +5,6 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from api.models.export_models.export_user import ExportECOMUserList
-# from api.services.email_services import EmailServices
 from api.services.user_services import UserServices
 
 
