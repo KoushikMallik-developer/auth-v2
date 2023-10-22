@@ -19,7 +19,10 @@ class ExportECOMUser(BaseModel):
 
     def __init__(self, **kwargs):
         if kwargs.get("image"):
-            kwargs["image"] = kwargs.get("image").url
+            if not isinstance(kwargs.get("image"), str):
+                kwargs["image"] = kwargs.get("image").url
+            else:
+                kwargs["image"] = None
         if not kwargs.get("id"):
             kwargs["id"] = kwargs.get("email")
         super().__init__(**kwargs)
