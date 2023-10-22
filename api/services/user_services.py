@@ -23,11 +23,10 @@ class UserServices:
             all_user_details = []
             for user in users:
                 user_export_details = ExportECOMUser(**model_to_dict(user))
-                # all_user_details[user_export_details.id] = user_export_details
                 all_user_details.append(user_export_details)
             all_user_details = ExportECOMUserList(user_list=all_user_details)
             return all_user_details
-        except Exception as e:
+        except Exception:
             logging.error("Database connection error")
             raise Exception("Database connection error")
 
@@ -118,7 +117,7 @@ class UserServices:
             )
             try:
                 user.save()
-            except Exception as e:
+            except Exception:
                 return {"token": None, "error": "Could not save the user"}
             export_user = ExportECOMUser(**model_to_dict(user))
             token = TokenGenerator().get_tokens_for_user(export_user)
