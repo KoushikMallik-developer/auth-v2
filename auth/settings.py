@@ -88,9 +88,7 @@ DATABASES = {
         "ENGINE": "djongo",
         "NAME": "auth",
         "ENFORCE_SCHEMA": False,
-        "CLIENT": {
-            "host": "mongodb+srv://shoppixa_auth:cQPJ1dTY7A0ROsXY@ecom-auth.w7xry4z.mongodb.net/?retryWrites=true&w=majority"
-        },
+        "CLIENT": {"host": os.environ.get("MONGODB_HOST")},
     }
 }
 
