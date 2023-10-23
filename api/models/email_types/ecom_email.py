@@ -31,7 +31,7 @@ class ECOMEmailMessage(BaseModel):
     @classmethod
     def create_email_by_user_email(cls, user_email: str, otp: str) -> ECOMEmailMessage:
         if user_email:
-            if ECOMUser.objects.filter(email=user_email).exists():
+            if ECOMUser.objects.filter(email=user_email).count() > 0:
                 return cls(
                     subject="Shoopixa User Verification",
                     body=f"Your OTP is: {otp}",
