@@ -6,7 +6,9 @@ from api.models.validation_result import ValidationResult
 
 def validate_email(email: str) -> ValidationResult:
     if validate_email_format(email):
-        existing_account = ECOMUser.objects.filter(email=email).exists()
+        existing_account = (
+            True if ECOMUser.objects.filter(email=email).count() > 0 else False
+        )
         if existing_account:
             return ValidationResult(
                 is_validated=False,
