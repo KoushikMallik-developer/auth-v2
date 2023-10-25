@@ -1,6 +1,6 @@
 ### Overview
 
-> JIRA Ticket:[ ECOMAPI - 1234 ](https://schoolbook.atlassian.net/browse/ECOMAPI-1234)
+> JIRA Ticket:[ AUTH - 1234 ](https://shoppixa.atlassian.net/browse/AUTH-1234)
 
 **What was the problem:**
 
