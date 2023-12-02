@@ -51,6 +51,18 @@ Run the below commands to make the migrations for database models.
   python .\manage.py migrate
 ```
 
+Redis-Windows download:
+```https://github.com/tporadowski/redis/releases/download/v5.0.14.1/Redis-x64-5.0.14.1.msi```
+
+Install Redis using the installer downloaded.
+Add redis in env var.
+
+Run redis-cli in cmd
+```bash
+  redis-cli
+  ping
+```
+
 Run the server.
 
 ```bash

@@ -7,7 +7,7 @@ from api.models.user import ECOMUser
 def user_list():
     return [
         {
-            "id": "koushikmallik001@gmail.com",
+            "id": "a0309afd-2f4a-4726-9903-fb07e3d7500e",
             "username": "koushikmallik",
             "email": "koushikmallik001@gmail.com",
             "fname": "Koushik",
@@ -19,7 +19,7 @@ def user_list():
             "account_type": "Regular",
         },
         {
-            "id": "animeshece1998@gmail.com",
+            "id": "8a3a52ad-bb84-425c-bda7-884effd28374",
             "username": "koushikmallik",
             "email": "animeshece1998@gmail.com",
             "fname": "Koushik",
