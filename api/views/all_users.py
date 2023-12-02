@@ -12,7 +12,7 @@ class AllUsersView(APIView):
     renderer_classes = [JSONRenderer]
 
     def get(self, request: Request):
-        all_user_details = UserServices.get_all_users_service()
+        all_user_details = UserServices().get_all_users_service()
         if all_user_details and isinstance(all_user_details, ExportECOMUserList):
             return Response(
                 data={"data": all_user_details.model_dump(), "errorMessage": None},

@@ -1,9 +1,14 @@
+import uuid
+
 from django.db import models
 
-from api.models.base_user import BaseUser
+from api.models.definitions import ACCOUNT_TYPE_CHOICES
 
 
-class AbstractUser(BaseUser):
+class AbstractUser(models.Model):
+    id = models.CharField(
+        max_length=150, unique=True, primary_key=True, null=False, editable=False
+    )
     username = models.CharField(max_length=25)
     email = models.EmailField(
         verbose_name="Email", max_length=255, unique=True, null=False
@@ -19,6 +24,13 @@ class AbstractUser(BaseUser):
         null=True,
     )
     is_active = models.BooleanField(default=False)
+    account_type = models.CharField(
+        max_length=10,
+        choices=ACCOUNT_TYPE_CHOICES,
+        default="Regular",
+    )
+    created_at = models.DateTimeField(auto_now_add=True, editable=False)
+    updated_at = models.DateTimeField(auto_now=True)
 
     class Meta:
         abstract = True
@@ -71,4 +83,5 @@ class AbstractUser(BaseUser):
             return self.username
 
     def save(self, *args, **kwargs):
+        self.id = uuid.uuid4()
         super().save(*args, **kwargs)

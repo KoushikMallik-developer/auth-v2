@@ -6,6 +6,7 @@ from pydantic import BaseModel
 
 
 class ExportECOMUser(BaseModel):
+    id: str
     username: str
     email: str
     fname: str
@@ -22,6 +23,8 @@ class ExportECOMUser(BaseModel):
                 kwargs["image"] = kwargs.get("image").url
             else:
                 kwargs["image"] = None
+        if not kwargs.get("id"):
+            kwargs["id"] = kwargs.get("email")
         super().__init__(**kwargs)
 
 
