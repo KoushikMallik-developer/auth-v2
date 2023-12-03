@@ -1,12 +1,13 @@
 import datetime
 import typing
 from typing import Optional
+from uuid import UUID
 
 from pydantic import BaseModel
 
 
 class ExportECOMUser(BaseModel):
-    id: str
+    id: UUID
     username: str
     email: str
     fname: str
@@ -23,8 +24,6 @@ class ExportECOMUser(BaseModel):
                 kwargs["image"] = kwargs.get("image").url
             else:
                 kwargs["image"] = None
-        if not kwargs.get("id"):
-            kwargs["id"] = kwargs.get("email")
         super().__init__(**kwargs)
 
 
