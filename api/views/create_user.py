@@ -16,7 +16,7 @@ class CreateUsersView(APIView):
         password1 = request_data.get("password1")
         password2 = request_data.get("password2")
         if username and email and fname and lname and password1 and password2:
-            result = UserServices.create_new_user_service(
+            result = UserServices().create_new_user_service(
                 data={
                     "username": username,
                     "email": email,
