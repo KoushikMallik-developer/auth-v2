@@ -1,6 +1,4 @@
 from typing import Optional
-
-from django.forms import model_to_dict
 from rest_framework import serializers
 
 from api.models.export_models.export_user import ExportECOMUser
@@ -94,4 +92,4 @@ class ECOMUserSerializer(serializers.ModelSerializer):
                 password=EncryptionServices().encrypt(password1),
             )
             user.save()
-            return ExportECOMUser(**model_to_dict(user))
+            return ExportECOMUser(**user.model_to_dict())

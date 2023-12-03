@@ -1,11 +1,13 @@
 import datetime
 import typing
 from typing import Optional
+from uuid import UUID
 
 from pydantic import BaseModel
 
 
 class ExportECOMUser(BaseModel):
+    id: UUID
     username: str
     email: str
     fname: str

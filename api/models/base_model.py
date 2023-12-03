@@ -12,3 +12,6 @@ class ECOMBaseModel(models.Model):
 
     class Meta:
         abstract = True
+
+    def model_to_dict(self) -> dict:
+        return {field.name: getattr(self, field.name) for field in self._meta.fields}
