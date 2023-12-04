@@ -32,9 +32,9 @@ class CreateUsersView(APIView):
                     status=status.HTTP_400_BAD_REQUEST,
                     content_type="application/json",
                 )
-            if result.get("token"):
+            if result.get("message"):
                 return Response(
-                    data={"token": result.get("token"), "errorMessage": None},
+                    data={"message": result.get("message"), "errorMessage": None},
                     status=status.HTTP_201_CREATED,
                     content_type="application/json",
                 )

@@ -16,14 +16,14 @@ class OTPServices:
         self.KEYWORD_PREFIX = "_VERIFICATION_OTP"
         self.expiration_time = 900
 
-    def send_otp_to_user(self, user: ExportECOMUser) -> Optional[str]:
+    def send_otp_to_user(self, user_email: str) -> Optional[str]:
         email_services = EmailServices()
-        cache_keyword = f"{user.email.upper()}{self.KEYWORD_PREFIX}"
+        cache_keyword = f"{user_email.upper()}{self.KEYWORD_PREFIX}"
         cached_data = cache.get(cache_keyword)
-        db_user = ECOMUser.objects.get(email=user.email)
+        db_user = ECOMUser.objects.get(email=user_email)
         if cached_data:
-            response = email_services.send_otp_email_by_user(
-                user=user, otp=base64.b64decode(cached_data).decode("utf-8")
+            response = email_services.send_otp_email_by_user_email(
+                user_email=user_email, otp=base64.b64decode(cached_data).decode("utf-8")
             )
         elif (
             ECOMEmailVerification.objects.filter(
@@ -41,8 +41,8 @@ class OTPServices:
                 base64.b64encode(verification_data.code.encode("utf-8")),
                 self.expiration_time,
             )
-            response = email_services.send_otp_email_by_user(
-                user=user, otp=verification_data.code
+            response = email_services.send_otp_email_by_user_email(
+                user_email=user_email, otp=verification_data.code
             )
         else:
             verification_data: ECOMEmailVerification = self.__create_otp(user=db_user)
@@ -51,12 +51,11 @@ class OTPServices:
                 base64.b64encode(verification_data.code.encode("utf-8")),
                 self.expiration_time,
             )
-            response = email_services.send_otp_email_by_user(
-                user=user, otp=verification_data.code
+            response = email_services.send_otp_email_by_user_email(
+                user_email=user_email, otp=verification_data.code
             )
 
-        if response == "OK":
-            return response
+        return response
 
     def __create_otp(self, user: ECOMUser) -> ECOMEmailVerification:
         generator = OTPGenerator()
@@ -68,19 +67,22 @@ class OTPServices:
     def __validate_otp(self, user: ECOMUser, otp) -> bool:
         try:
             ecom_verification_obj = ECOMEmailVerification.objects.get(
-                user=user, code=otp, is_used=False, expiration_time__gte=timezone.now()
+                user=user, code=otp, expiration_time__gte=timezone.now()
             )
-            ecom_verification_obj.is_used = True
-            ecom_verification_obj.save()
-            return True
-        except ECOMEmailVerification.DoesNotExist:
+            if not ecom_verification_obj.is_used:
+                ecom_verification_obj.is_used = True
+                ecom_verification_obj.save()
+                return True
+            else:
+                return False
+        except Exception:
             return False
 
     def verify_otp(self, user: ExportECOMUser, otp) -> str:
         user = ECOMUser.objects.get(email=user.email)
         if self.__validate_otp(user=user, otp=otp):
-            user.is_verified = True
+            user.is_active = True
             user.save()
             return "Account Verification completed Successfully"
         else:
-            return "Account Verification Failed, Please try again."
+            return "OTP did not match, Please generate new otp and try again."
