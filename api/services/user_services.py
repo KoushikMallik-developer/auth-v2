@@ -35,7 +35,6 @@ class UserServices:
             serializer = ECOMUserSerializer()
             user: ExportECOMUser = serializer.create(data=data)
             if user:
-                # token = TokenGenerator().get_tokens_for_user(user)
                 response = OTPServices().send_otp_to_user(user.email)
                 if response == "OK":
                     message = default_verification_message

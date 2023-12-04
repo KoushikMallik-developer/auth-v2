@@ -7,6 +7,7 @@ from rest_framework.views import APIView
 
 from api.models.user import ECOMUser
 from api.services.otp_services.otp_services import OTPServices
+from api.services.token_generator import TokenGenerator
 
 
 class ValidateOTPView(APIView):
@@ -25,9 +26,14 @@ class ValidateOTPView(APIView):
             user = ECOMUser.objects.get(email=email)
             if not user.is_active:
                 response = OTPServices().verify_otp(user, otp)
+                token = TokenGenerator().get_tokens_for_user(user)
                 if response:
                     return Response(
-                        data={"message": response, "errorMessage": None},
+                        data={
+                            "message": response,
+                            "token": token,
+                            "errorMessage": None,
+                        },
                         status=status.HTTP_200_OK,
                         content_type="application/json",
                     )
