@@ -44,6 +44,7 @@ class TestEmailServices:
             response = email_service.send_otp_email_by_user_email(
                 user_email=user_email, otp=otp
             )
+            assert response
 
     @pytest.mark.parametrize(
         "user_data, expected",
