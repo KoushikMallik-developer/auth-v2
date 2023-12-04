@@ -67,12 +67,15 @@ class OTPServices:
     def __validate_otp(self, user: ECOMUser, otp) -> bool:
         try:
             ecom_verification_obj = ECOMEmailVerification.objects.get(
-                user=user, code=otp, is_used=False, expiration_time__gte=timezone.now()
+                user=user, code=otp, expiration_time__gte=timezone.now()
             )
-            ecom_verification_obj.is_used = True
-            ecom_verification_obj.save()
-            return True
-        except ECOMEmailVerification.DoesNotExist:
+            if not ecom_verification_obj.is_used:
+                ecom_verification_obj.is_used = True
+                ecom_verification_obj.save()
+                return True
+            else:
+                return False
+        except Exception:
             return False
 
     def verify_otp(self, user: ExportECOMUser, otp) -> str:
@@ -82,4 +85,4 @@ class OTPServices:
             user.save()
             return "Account Verification completed Successfully"
         else:
-            return "Account Verification Failed, Please try again."
+            return "OTP did not match, Please generate new otp and try again."

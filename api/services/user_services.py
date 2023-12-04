@@ -6,9 +6,11 @@ from rest_framework import serializers
 from api.models.export_models.export_user import ExportECOMUser, ExportECOMUserList
 from api.models.user import ECOMUser
 from api.serializers.ecom_user_serializer import ECOMUserSerializer
-from api.services.definitions import default_verification_message, default_verification_message_email_failed
+from api.services.definitions import (
+    default_verification_message,
+    default_verification_message_email_failed,
+)
 from api.services.otp_services.otp_services import OTPServices
-from api.services.token_generator import TokenGenerator
 
 
 class UserServices:

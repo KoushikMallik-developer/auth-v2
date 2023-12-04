@@ -4,20 +4,18 @@ from rest_framework.request import Request
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
+
 from api.models.user import ECOMUser
-from api.services.definitions import (
-    default_verification_message,
-    default_verification_message_email_failed,
-)
 from api.services.otp_services.otp_services import OTPServices
 
 
-class SendOTPView(APIView):
+class ValidateOTPView(APIView):
     renderer_classes = [JSONRenderer]
 
     def post(self, request: Request):
         request_data = request.data
         email = request_data.get("email")
+        otp = request_data.get("otp")
 
         user_exists = (
             True if ECOMUser.objects.filter(email=email).count() > 0 else False
@@ -26,16 +24,13 @@ class SendOTPView(APIView):
         if user_exists:
             user = ECOMUser.objects.get(email=email)
             if not user.is_active:
-                response = OTPServices().send_otp_to_user(email)
-                if response == "OK":
-                    message = default_verification_message
-                else:
-                    message = default_verification_message_email_failed
-                return Response(
-                    data={"message": message, "errorMessage": None},
-                    status=status.HTTP_200_OK,
-                    content_type="application/json",
-                )
+                response = OTPServices().verify_otp(user, otp)
+                if response:
+                    return Response(
+                        data={"message": response, "errorMessage": None},
+                        status=status.HTTP_200_OK,
+                        content_type="application/json",
+                    )
             else:
                 return Response(
                     data={

@@ -32,4 +32,3 @@ class EmailServices:
         except Exception as e:
             logging.warning(e)
             return "Error Occurred while sending Email."
-
