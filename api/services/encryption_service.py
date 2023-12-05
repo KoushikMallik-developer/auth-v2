@@ -16,12 +16,13 @@ class EncryptionServices:
         encrypted_password = encryptor.encrypt(password)
         return encrypted_password
 
-    def decrypt(self, encrypted_password):
+    def decrypt(self, encrypted_password: str) -> str:
         load_dotenv()
         key = base64.b64encode(
             f"{os.environ.get('ENCRYPTION_PASSWORD'):<32}".encode("utf-8")
         )
+        encrypted_password = encrypted_password[2:-1].encode("utf-8")
         encryptor = Fernet(key=key)
-        decrypted_password = encryptor.decrypt(encrypted_password).decode("utf-8")
+        decrypted_password = encryptor.decrypt(encrypted_password)
         decrypted_password = base64.b64decode(decrypted_password).decode("utf-8")
         return decrypted_password
