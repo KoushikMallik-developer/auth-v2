@@ -12,6 +12,7 @@ from api.auth_exceptions.user_exceptions import (
     EmailNotSentError,
     UserNotFoundError,
     UserNotVerifiedError,
+    UserAuthenticationFailedError,
 )
 from api.services.user_services import UserServices
 
@@ -39,7 +40,7 @@ class SignInView(APIView):
                         content_type="application/json",
                     )
             else:
-                raise ValueError()
+                raise ValueError("Email or Password is not in correct format")
 
         except DatabaseError as e:
             logging.error(
@@ -53,6 +54,7 @@ class SignInView(APIView):
                 status=status.HTTP_500_INTERNAL_SERVER_ERROR,
                 content_type="application/json",
             )
+
         except ValidationError as e:
             logging.error(
                 f"PydanticValidationError: Error Occured while converting to Pydantic object: {e}"
@@ -66,6 +68,12 @@ class SignInView(APIView):
                 content_type="application/json",
             )
         except EmailNotSentError as e:
+            return Response(
+                data={"data": None, "errorMessage": f"EmailNotSentError: {e.msg}"},
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                content_type="application/json",
+            )
+        except UserAuthenticationFailedError as e:
             return Response(
                 data={"data": None, "errorMessage": f"EmailNotSentError: {e.msg}"},
                 status=status.HTTP_500_INTERNAL_SERVER_ERROR,
