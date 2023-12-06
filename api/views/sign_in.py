@@ -75,7 +75,10 @@ class SignInView(APIView):
             )
         except UserAuthenticationFailedError as e:
             return Response(
-                data={"data": None, "errorMessage": f"EmailNotSentError: {e.msg}"},
+                data={
+                    "data": None,
+                    "errorMessage": f"UserAuthenticationFailedError: {e.msg}",
+                },
                 status=status.HTTP_500_INTERNAL_SERVER_ERROR,
                 content_type="application/json",
             )

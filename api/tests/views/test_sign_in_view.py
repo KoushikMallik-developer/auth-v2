@@ -10,6 +10,11 @@ class TestSignInView:
         [
             ("koushikmallik001@gmail.com", "1234567", "success"),
             (
+                "koushikmallik001@gmail.com",
+                "1234567778",
+                "UserAuthenticationFailedError: Password is invalid.",
+            ),
+            (
                 "abcdef@googlecom",
                 "1234567",
                 "UserNotFoundError: This user is not registered. Please register as new user.",
