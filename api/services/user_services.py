@@ -1,3 +1,4 @@
+import logging
 from typing import Optional
 from djongo.database import DatabaseError
 from api.auth_exceptions.user_exceptions import EmailNotSentError
@@ -36,3 +37,16 @@ class UserServices:
                 return {"message": DEFAULT_VERIFICATION_MESSAGE, "error": None}
             else:
                 raise EmailNotSentError()
+
+    @staticmethod
+    def sign_in_user(data: dict) -> dict:
+        email = data.get("email")
+        password = data.get("password")
+        if email and password:
+            response = ECOMUser.authenticate(email=email, password=password)
+            return response
+        else:
+            return {
+                "token": None,
+                "errorMessage": "Please retry with correct credentials.",
+            }
