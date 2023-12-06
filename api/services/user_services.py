@@ -1,4 +1,3 @@
-import logging
 from typing import Optional
 from djongo.database import DatabaseError
 from api.auth_exceptions.user_exceptions import EmailNotSentError
@@ -34,7 +33,10 @@ class UserServices:
         if user:
             response = OTPServices().send_otp_to_user(user.email)
             if response == "OK":
-                return {"message": DEFAULT_VERIFICATION_MESSAGE, "error": None}
+                return {
+                    "successMessage": DEFAULT_VERIFICATION_MESSAGE,
+                    "errorMessage": None,
+                }
             else:
                 raise EmailNotSentError()
 
@@ -45,8 +47,3 @@ class UserServices:
         if email and password:
             response = ECOMUser.authenticate(email=email, password=password)
             return response
-        else:
-            return {
-                "token": None,
-                "errorMessage": "Please retry with correct credentials.",
-            }

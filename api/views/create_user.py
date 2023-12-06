@@ -7,6 +7,7 @@ from rest_framework.request import Request
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
+from api.auth_exceptions.user_exceptions import EmailNotSentError
 from api.services.user_services import UserServices
 
 
@@ -31,19 +32,10 @@ class CreateUsersView(APIView):
                         "password2": password2,
                     }
                 )
-                if result.get("error"):
+                if result.get("successMessage"):
                     return Response(
                         data={
-                            "successMessage": None,
-                            "errorMessage": result.get("error"),
-                        },
-                        status=status.HTTP_400_BAD_REQUEST,
-                        content_type="application/json",
-                    )
-                if result.get("message"):
-                    return Response(
-                        data={
-                            "successMessage": result.get("message"),
+                            "successMessage": result.get("successMessage"),
                             "errorMessage": None,
                         },
                         status=status.HTTP_201_CREATED,
@@ -57,32 +49,41 @@ class CreateUsersView(APIView):
                 f"DatabaseError: Error Occured While saving users details: {e}"
             )
             return Response(
-                data={"successMessage": None, "errorMessage": "Internal Server Error"},
+                data={
+                    "successMessage": None,
+                    "errorMessage": f"DatabaseError: Error Occured While saving users details: {e}",
+                },
                 status=status.HTTP_500_INTERNAL_SERVER_ERROR,
                 content_type="application/json",
             )
-
         except ValidationError as e:
             logging.error(
                 f"PydanticValidationError: Error Occured while converting to Pydantic object: {e}"
             )
             return Response(
-                data={"successMessage": None, "errorMessage": "Internal Server Error"},
+                data={
+                    "successMessage": None,
+                    "errorMessage": f"PydanticValidationError: Error Occured while converting to Pydantic object: {e}",
+                },
                 status=status.HTTP_500_INTERNAL_SERVER_ERROR,
                 content_type="application/json",
             )
-
         except serializers.ValidationError as e:
             logging.warning(f"SerializerValidationError: {e.detail}")
             return Response(
                 data={
                     "successMessage": None,
-                    "errorMessage": f"SerializerValidationError: {e.detail}",
+                    "errorMessage": f"SerializerValidationError: {'; '.join([error for error in e.detail])}",
                 },
                 status=status.HTTP_400_BAD_REQUEST,
                 content_type="application/json",
             )
-
+        except EmailNotSentError as e:
+            return Response(
+                data={"data": None, "errorMessage": f"EmailNotSentError: {e.msg}"},
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                content_type="application/json",
+            )
         except ValueError as e:
             logging.warning(f"Internal Server Error: {e}")
             return Response(
@@ -90,11 +91,23 @@ class CreateUsersView(APIView):
                 status=status.HTTP_400_BAD_REQUEST,
                 content_type="application/json",
             )
-
-        except Exception as e:
+        except NotImplementedError as e:
             logging.warning(f"Internal Server Error: {e}")
             return Response(
-                data={"successMessage": None, "errorMessage": "Internal Server Error"},
-                status=status.HTTP_400_BAD_REQUEST,
+                data={
+                    "successMessage": None,
+                    "errorMessage": f"NotImplementedError: {e}",
+                },
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                content_type="application/json",
+            )
+        except Exception as e:
+            logging.warning(f"InternalServerError: {e}")
+            return Response(
+                data={
+                    "successMessage": None,
+                    "errorMessage": f"InternalServerError: {e}",
+                },
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR,
                 content_type="application/json",
             )

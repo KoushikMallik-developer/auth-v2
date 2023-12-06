@@ -31,7 +31,10 @@ class AllUsersView(APIView):
                 f"DatabaseError: Error Occured While Fetching all users details: {e}"
             )
             return Response(
-                data={"data": None, "errorMessage": "Internal Server Error"},
+                data={
+                    "data": None,
+                    "errorMessage": f"DatabaseError: Error Occured While Fetching all users details: {e}",
+                },
                 status=status.HTTP_500_INTERNAL_SERVER_ERROR,
                 content_type="application/json",
             )
@@ -40,14 +43,27 @@ class AllUsersView(APIView):
                 f"PydanticValidationError: Error Occured while converting to Pydantic object: {e}"
             )
             return Response(
-                data={"data": None, "errorMessage": "Internal Server Error"},
+                data={
+                    "data": None,
+                    "errorMessage": f"PydanticValidationError: Error Occured while converting to Pydantic object: {e}",
+                },
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                content_type="application/json",
+            )
+        except NotImplementedError as e:
+            logging.warning(f"Internal Server Error: {e}")
+            return Response(
+                data={
+                    "successMessage": None,
+                    "errorMessage": f"NotImplementedError: {e}",
+                },
                 status=status.HTTP_500_INTERNAL_SERVER_ERROR,
                 content_type="application/json",
             )
         except Exception as e:
-            logging.error(f"Internal Server Error: {e}")
+            logging.error(f"InternalServerError: {e}")
             return Response(
-                data={"data": None, "errorMessage": "Internal Server Error"},
+                data={"data": None, "errorMessage": f"InternalServerError {e}"},
                 status=status.HTTP_500_INTERNAL_SERVER_ERROR,
                 content_type="application/json",
             )

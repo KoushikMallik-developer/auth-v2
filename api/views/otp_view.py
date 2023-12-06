@@ -54,19 +54,22 @@ class SendOTPView(APIView):
                 raise ValueError("Email address is not in correct format.")
         except EmailNotSentError as e:
             return Response(
-                data={"data": None, "errorMessage": f"Internal Server Error: {e.msg}"},
+                data={"data": None, "errorMessage": f"EmailNotSentError: {e.msg}"},
                 status=status.HTTP_500_INTERNAL_SERVER_ERROR,
                 content_type="application/json",
             )
         except UserAlreadyVerifiedError as e:
             return Response(
-                data={"data": None, "errorMessage": f"Internal Server Error: {e.msg}"},
+                data={
+                    "data": None,
+                    "errorMessage": f"UserAlreadyVerifiedError: {e.msg}",
+                },
                 status=status.HTTP_403_FORBIDDEN,
                 content_type="application/json",
             )
         except UserNotFoundError as e:
             return Response(
-                data={"data": None, "errorMessage": f"Internal Server Error: {e.msg}"},
+                data={"data": None, "errorMessage": f"UserNotFoundError: {e.msg}"},
                 status=status.HTTP_401_UNAUTHORIZED,
                 content_type="application/json",
             )
@@ -81,13 +84,27 @@ class SendOTPView(APIView):
                 f"PydanticValidationError: Error Occured while converting to Pydantic object: {e}"
             )
             return Response(
-                data={"data": None, "errorMessage": "Internal Server Error"},
+                data={
+                    "data": None,
+                    "errorMessage": f"PydanticValidationError: Error Occured while converting to Pydantic object: {e}",
+                },
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                content_type="application/json",
+            )
+        except NotImplementedError as e:
+            logging.warning(f"NotImplementedError: {e}")
+            return Response(
+                data={
+                    "successMessage": None,
+                    "errorMessage": f"NotImplementedError: {e}",
+                },
                 status=status.HTTP_500_INTERNAL_SERVER_ERROR,
                 content_type="application/json",
             )
         except Exception as e:
+            logging.warning(f"InternalServerError: {e}")
             return Response(
-                data={"data": None, "errorMessage": f"ValueError: {e}"},
+                data={"data": None, "errorMessage": f"InternalServerError: {e}"},
                 status=status.HTTP_500_INTERNAL_SERVER_ERROR,
                 content_type="application/json",
             )

@@ -1,18 +1,58 @@
-class UserNotFoundError(BaseException):
-    def get_default_msg(self):
-        return "Please register your account first to verify."
+import logging
+from typing import Optional
+
+from api.auth_exceptions.base_exception import AUTHBaseException
 
 
-class UserAlreadyVerifiedError(BaseException):
-    def get_default_msg(self):
-        return "This user is already verified."
+class UserNotFoundError(AUTHBaseException):
+    def __init__(self, msg: Optional[str] = None):
+        if not msg:
+            self.msg = "This user is not registered. Please register as new user."
+        else:
+            super().__init__(msg)
+        logging.error(self.msg)
 
 
-class EmailNotSentError(BaseException):
-    def get_default_msg(self):
-        return "Verification Email could not be sent."
+class UserAlreadyVerifiedError(AUTHBaseException):
+    def __init__(self, msg: Optional[str] = None):
+        if not msg:
+            self.msg = "This user is already verified."
+        else:
+            super().__init__(msg)
+        logging.error(self.msg)
 
 
-class OTPNotVerifiedError(BaseException):
-    def get_default_msg(self):
-        return "OTP did not match."
+class UserNotVerifiedError(AUTHBaseException):
+    def __init__(self, msg: Optional[str] = None):
+        if not msg:
+            self.msg = "This user is not verified. Please verify your email first."
+        else:
+            super().__init__(msg)
+        logging.error(self.msg)
+
+
+class EmailNotSentError(AUTHBaseException):
+    def __init__(self, msg: Optional[str] = None):
+        if not msg:
+            self.msg = "Verification Email could not be sent."
+        else:
+            super().__init__(msg)
+        logging.error(self.msg)
+
+
+class OTPNotVerifiedError(AUTHBaseException):
+    def __init__(self, msg: Optional[str] = None):
+        if not msg:
+            self.msg = "OTP did not match."
+        else:
+            super().__init__(msg)
+        logging.error(self.msg)
+
+
+class UserAuthenticationFailedError(AUTHBaseException):
+    def __init__(self, msg: Optional[str] = None):
+        if not msg:
+            self.msg = "Password is invalid."
+        else:
+            super().__init__(msg)
+        logging.error(self.msg)
