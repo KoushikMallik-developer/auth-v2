@@ -44,3 +44,16 @@ class UserServices:
         except serializers.ValidationError as e:
             return {"message": message, "error": e.detail}
         return {"message": message, "error": None}
+
+    @staticmethod
+    def sign_in_user(data: dict) -> dict:
+        email = data.get("email")
+        password = data.get("password")
+        if email and password:
+            response = ECOMUser.authenticate(email=email, password=password)
+            return response
+        else:
+            return {
+                "token": None,
+                "errorMessage": "Please retry with correct credentials.",
+            }
