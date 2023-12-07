@@ -78,11 +78,11 @@ class OTPServices:
         except Exception:
             return False
 
-    def verify_otp(self, user: ExportECOMUser, otp) -> str:
+    def verify_otp(self, user: ExportECOMUser, otp) -> bool:
         user = ECOMUser.objects.get(email=user.email)
         if self.__validate_otp(user=user, otp=otp):
             user.is_active = True
             user.save()
-            return "Account Verification completed Successfully"
+            return True
         else:
-            return "OTP did not match, Please generate new otp and try again."
+            return False

@@ -22,12 +22,11 @@ class TestCreateUsersView:
         response = client.post(url, data, format="json")
         assert response
         response = response.json()
-        if response.get("error"):
+        if response.get("errorMessage"):
             assert isinstance(response.get("errorMessage"), str)
         else:
-            assert response.get("token")
-            assert response.get("token").get("refresh")
-            assert response.get("token").get("access")
+            assert response.get("successMessage")
+            assert isinstance(response.get("successMessage"), str)
 
     @pytest.mark.parametrize(
         "username,email,fname,lname,password1,password2",

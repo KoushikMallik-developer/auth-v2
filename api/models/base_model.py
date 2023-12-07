@@ -1,5 +1,7 @@
+import logging
 import uuid
 
+from django.core.exceptions import FieldError
 from django.db import models
 
 
@@ -14,4 +16,10 @@ class ECOMBaseModel(models.Model):
         abstract = True
 
     def model_to_dict(self) -> dict:
-        return {field.name: getattr(self, field.name) for field in self._meta.fields}
+        try:
+            return {
+                field.name: getattr(self, field.name) for field in self._meta.fields
+            }
+        except Exception:
+            logging.error("Error occured  while converting model to dict")
+            raise FieldError("Error occured  while converting model to dict")

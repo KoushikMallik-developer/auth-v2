@@ -1,3 +1,8 @@
+from api.auth_exceptions.user_exceptions import (
+    UserNotFoundError,
+    UserNotVerifiedError,
+    UserAuthenticationFailedError,
+)
 from api.models.abstract_user import AbstractUser
 from api.services.encryption_service import EncryptionServices
 from api.services.token_generator import TokenGenerator
@@ -12,27 +17,22 @@ class ECOMUser(AbstractUser):
 
     @staticmethod
     def authenticate(email, password) -> dict:
-        try:
+        user_exists = (
+            True if ECOMUser.objects.filter(email=email).count() > 0 else False
+        )
+        if user_exists:
             user = ECOMUser.objects.get(email=email)
-            if user.is_active:
-                if EncryptionServices().decrypt(user.password) == password:
-                    token = TokenGenerator().get_tokens_for_user(user)
-                    return {
-                        "token": token,
-                        "errorMessage": None,
-                    }
+            if user:
+                if user.is_active:
+                    if EncryptionServices().decrypt(user.password) == password:
+                        token = TokenGenerator().get_tokens_for_user(user)
+                        return {
+                            "token": token,
+                            "errorMessage": None,
+                        }
+                    else:
+                        raise UserAuthenticationFailedError()
                 else:
-                    return {
-                        "token": None,
-                        "errorMessage": "Invalid Password.",
-                    }
-            else:
-                return {
-                    "token": None,
-                    "errorMessage": "Please verify your email first.",
-                }
-        except Exception:
-            return {
-                "token": None,
-                "errorMessage": "User doesn't exist. Please sign up your account.",
-            }
+                    raise UserNotVerifiedError()
+        else:
+            raise UserNotFoundError()
