@@ -14,7 +14,7 @@ def user_list():
             "lname": "Google",
             "dob": None,
             "phone": None,
-            "password": "b'gAAAAABlcLJF0FLjcCWFUWQfRl442eAlZ9_IGgfUJAHlXpinOI_YrnpfUtXBfKpJifVI9T9JNuSUy9ax3oCyLbbqouA8rjd9Lg=='",  # pragma: allowlist-secret
+            "password": "b'gAAAAABlcLJF0FLjcCWFUWQfRl442eAlZ9_IGgfUJAHlXpinOI_YrnpfUtXBfKpJifVI9T9JNuSUy9ax3oCyLbbqouA8rjd9Lg=='",  # pragma: allowlist-secret # noqa
             "image": "/images/users/defaultUserImage.png",
             "is_active": True,
             "account_type": "Regular",
@@ -25,7 +25,7 @@ def user_list():
             "email": "animeshece1998@gmail.com",
             "fname": "Koushik",
             "lname": "Google",
-            "password": "b'gAAAAABlcLJF0FLjcCWFUWQfRl442eAlZ9_IGgfUJAHlXpinOI_YrnpfUtXBfKpJifVI9T9JNuSUy9ax3oCyLbbqouA8rjd9Lg=='",  # pragma: allowlist-secret
+            "password": "b'gAAAAABlcLJF0FLjcCWFUWQfRl442eAlZ9_IGgfUJAHlXpinOI_YrnpfUtXBfKpJifVI9T9JNuSUy9ax3oCyLbbqouA8rjd9Lg=='",  # pragma: allowlist-secret # noqa
             "dob": None,
             "phone": None,
             "image": "/images/users/defaultUserImage.png",
