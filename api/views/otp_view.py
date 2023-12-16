@@ -1,5 +1,9 @@
 import logging
 
+from drf_yasg import openapi
+from drf_yasg.openapi import Schema
+from drf_yasg.utils import swagger_auto_schema
+
 from pydantic import ValidationError
 from rest_framework import status
 from rest_framework.renderers import JSONRenderer
@@ -22,6 +26,57 @@ from api.services.otp_services.otp_services import OTPServices
 class SendOTPView(APIView):
     renderer_classes = [JSONRenderer]
 
+    @swagger_auto_schema(
+        operation_summary="Send-OTP",
+        operation_description="Send-OTP",
+        request_body=Schema(
+            title="Send-OTP Request",
+            type=openapi.TYPE_OBJECT,
+            properties={
+                "email": Schema(
+                    name="email",
+                    in_=openapi.IN_BODY,
+                    type=openapi.TYPE_STRING,
+                    format=openapi.FORMAT_EMAIL,
+                )
+            },
+        ),
+        responses={
+            200: Schema(
+                title="Send-OTP Response",
+                type=openapi.TYPE_OBJECT,
+                properties={
+                    "successMessage": Schema(
+                        name="successMessage",
+                        in_=openapi.IN_BODY,
+                        type=openapi.TYPE_STRING,
+                    ),
+                    "errorMessage": Schema(
+                        name="errorMessage",
+                        in_=openapi.IN_BODY,
+                        type=openapi.TYPE_STRING,
+                    ),
+                },
+            ),
+            201: None,
+            "default": Schema(
+                title="Send-OTP Response",
+                type=openapi.TYPE_OBJECT,
+                properties={
+                    "successMessage": Schema(
+                        name="successMessage",
+                        in_=openapi.IN_BODY,
+                        type=openapi.TYPE_STRING,
+                    ),
+                    "errorMessage": Schema(
+                        name="errorMessage",
+                        in_=openapi.IN_BODY,
+                        type=openapi.TYPE_STRING,
+                    ),
+                },
+            ),
+        },
+    )
     def post(self, request: Request):
         try:
             request_data = request.data
@@ -73,12 +128,6 @@ class SendOTPView(APIView):
                 status=status.HTTP_401_UNAUTHORIZED,
                 content_type="application/json",
             )
-        except ValueError as e:
-            return Response(
-                data={"data": None, "errorMessage": f"ValueError: {e}"},
-                status=status.HTTP_400_BAD_REQUEST,
-                content_type="application/json",
-            )
         except ValidationError as e:
             logging.error(
                 f"PydanticValidationError: Error Occured while converting to Pydantic object: {e}"
@@ -91,6 +140,13 @@ class SendOTPView(APIView):
                 status=status.HTTP_500_INTERNAL_SERVER_ERROR,
                 content_type="application/json",
             )
+        except ValueError as e:
+            return Response(
+                data={"data": None, "errorMessage": f"ValueError: {e}"},
+                status=status.HTTP_400_BAD_REQUEST,
+                content_type="application/json",
+            )
+
         except NotImplementedError as e:
             logging.warning(f"NotImplementedError: {e}")
             return Response(
