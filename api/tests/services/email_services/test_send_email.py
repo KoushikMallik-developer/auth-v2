@@ -15,7 +15,6 @@ class TestEmailServices:
         [
             ("koushikmallik001@gmail.com", "OK"),
             ("animeshece1998@gmail.com", "OK"),
-            ("abcd@gmail.com", "Error Sending Email to User"),
         ],
     )
     def test_send_email_to_user_email(self, user_email: str, expected: str):
@@ -33,12 +32,26 @@ class TestEmailServices:
         assert isinstance(response, str)
         assert response == expected
 
+    def test_send_email_to_user_email_negative(self):
+        user_email = "abc2323d@gmail.com"
+        email_service = EmailServices()
+        generator = OTPGenerator()
+        otp = generator.generate_otp()
+        assert otp
+        assert len(otp) == 6
+        assert otp.isdigit()
+        with pytest.raises(ValueError):
+            response = email_service.send_otp_email_by_user_email(
+                user_email=user_email, otp=otp
+            )
+            assert response
+
     @pytest.mark.parametrize(
         "user_data, expected",
         [
             (
                 {
-                    "id": "abcdef@googls.com",
+                    "id": "a367c557-8950-4f16-93de-177c5b59775e",
                     "username": "koushikmallik",
                     "email": "abcdef@googls.com",
                     "fname": "Koushik",
