@@ -109,14 +109,17 @@ class SendOTPView(APIView):
                 raise ValueError("Email address is not in correct format.")
         except EmailNotSentError as e:
             return Response(
-                data={"data": None, "errorMessage": f"EmailNotSentError: {e.msg}"},
+                data={
+                    "successMessage": None,
+                    "errorMessage": f"EmailNotSentError: {e.msg}",
+                },
                 status=status.HTTP_500_INTERNAL_SERVER_ERROR,
                 content_type="application/json",
             )
         except UserAlreadyVerifiedError as e:
             return Response(
                 data={
-                    "data": None,
+                    "successMessage": None,
                     "errorMessage": f"UserAlreadyVerifiedError: {e.msg}",
                 },
                 status=status.HTTP_403_FORBIDDEN,
@@ -124,7 +127,10 @@ class SendOTPView(APIView):
             )
         except UserNotFoundError as e:
             return Response(
-                data={"data": None, "errorMessage": f"UserNotFoundError: {e.msg}"},
+                data={
+                    "successMessage": None,
+                    "errorMessage": f"UserNotFoundError: {e.msg}",
+                },
                 status=status.HTTP_401_UNAUTHORIZED,
                 content_type="application/json",
             )
@@ -142,7 +148,7 @@ class SendOTPView(APIView):
             )
         except ValueError as e:
             return Response(
-                data={"data": None, "errorMessage": f"ValueError: {e}"},
+                data={"successMessage": None, "errorMessage": f"ValueError: {e}"},
                 status=status.HTTP_400_BAD_REQUEST,
                 content_type="application/json",
             )
@@ -160,7 +166,10 @@ class SendOTPView(APIView):
         except Exception as e:
             logging.warning(f"InternalServerError: {e}")
             return Response(
-                data={"data": None, "errorMessage": f"InternalServerError: {e}"},
+                data={
+                    "successMessage": None,
+                    "errorMessage": f"InternalServerError: {e}",
+                },
                 status=status.HTTP_500_INTERNAL_SERVER_ERROR,
                 content_type="application/json",
             )

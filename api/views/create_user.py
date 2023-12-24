@@ -164,7 +164,10 @@ class CreateUsersView(APIView):
             )
         except EmailNotSentError as e:
             return Response(
-                data={"data": None, "errorMessage": f"EmailNotSentError: {e.msg}"},
+                data={
+                    "successMessage": None,
+                    "errorMessage": f"EmailNotSentError: {e.msg}",
+                },
                 status=status.HTTP_500_INTERNAL_SERVER_ERROR,
                 content_type="application/json",
             )
