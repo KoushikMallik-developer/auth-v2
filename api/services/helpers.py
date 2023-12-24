@@ -1,5 +1,6 @@
 import os
 import re
+from datetime import datetime
 
 from dotenv import load_dotenv
 from rest_framework_simplejwt.tokens import AccessToken
@@ -7,6 +8,7 @@ from rest_framework_simplejwt.tokens import AccessToken
 from api.models.user import ECOMUser
 from api.models.validation_result import ValidationResult
 from api.services.definitions import EnvironmentSettings
+from dateutil.parser import parse
 
 
 def validate_email(email: str) -> ValidationResult:
@@ -110,3 +112,35 @@ def get_environment() -> str:
     load_dotenv()
     env = os.environ.get("ENVIRONMENT_SETTINGS")
     return EnvironmentSettings[env].value
+
+
+def string_to_datetime(date_str: str) -> datetime:
+    return parse(date_str)
+
+
+def validate_dob(dob: datetime) -> ValidationResult:
+    if calculate_age(dob) > 13:
+        return ValidationResult(is_validated=True, error=None)
+    return ValidationResult(
+        is_validated=False, error="Your age cannot be less than 13 years."
+    )
+
+
+def calculate_age(dob: datetime) -> int:
+    try:
+        today = datetime.today()
+        age = today.year - dob.year - ((today.month, today.day) < (dob.month, dob.day))
+        return age
+    except Exception as e:
+        print(f"Error parsing date: {e}")
+        return None
+
+
+def validate_phone(phone: str) -> ValidationResult:
+    pattern = re.compile(r"^\+?[0-9]+\s?[0-9]*$")
+    if pattern.match(phone):
+        return ValidationResult(is_validated=True, error=None)
+    else:
+        return ValidationResult(
+            is_validated=False, error="Phone number is not in valid format."
+        )
