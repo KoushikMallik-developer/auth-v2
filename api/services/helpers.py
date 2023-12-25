@@ -19,6 +19,21 @@ def validate_email(email: str) -> ValidationResult:
         return ValidationResult(is_validated=False, error="Email format is not correct")
 
 
+def validate_user_email(email: str) -> ValidationResult:
+    if validate_email_format(email):
+        existing_account = (
+            True if ECOMUser.objects.filter(email=email).count() > 0 else False
+        )
+        if existing_account:
+            return ValidationResult(
+                is_validated=True,
+                error=None,
+            )
+        return ValidationResult(is_validated=False, error="User does not exists.")
+    else:
+        return ValidationResult(is_validated=False, error="Email format is not correct")
+
+
 def validate_email_format(email: str) -> bool:
     regex = r"\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,7}\b"
     if re.fullmatch(regex, email):
