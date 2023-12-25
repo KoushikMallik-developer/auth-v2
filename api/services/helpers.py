@@ -2,6 +2,7 @@ import os
 import re
 from datetime import datetime
 
+import dns
 from dotenv import load_dotenv
 from rest_framework_simplejwt.tokens import AccessToken
 
@@ -54,7 +55,11 @@ def validate_user_uid(uid: str) -> ValidationResult:
 def validate_email_format(email: str) -> bool:
     regex = r"\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,7}\b"
     if re.fullmatch(regex, email):
-        return True
+        domain = email.split("@")[1]
+        result = dns.resolver.resolve(domain, "MX")
+        if result:
+            return True
+        return False
     else:
         return False
 
