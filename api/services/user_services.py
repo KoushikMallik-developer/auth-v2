@@ -12,7 +12,14 @@ from api.services.definitions import (
 )
 from api.services.email_services import EmailServices
 from api.services.encryption_service import EncryptionServices
-from api.services.helpers import validate_user_email, validate_password
+from api.services.helpers import (
+    validate_user_email,
+    validate_password,
+    validate_name,
+    validate_dob,
+    string_to_datetime,
+    validate_phone,
+)
 from api.services.otp_services.otp_services import OTPServices
 from api.services.token_generator import TokenGenerator
 
@@ -86,10 +93,29 @@ class UserServices:
         reset_url = f"{FRONTEND_BASE_URL}/password-reset/{token}/"
         return reset_url
 
-    def change_password(self, uid: str, password1: str, password2: str):
+    @staticmethod
+    def change_password(uid: str, password1: str, password2: str):
         user = ECOMUser.objects.get(id=uid)
         if validate_password(password1, password2).is_validated:
             user.password = EncryptionServices().encrypt(password1)
             user.save()
         else:
             raise ValueError("Passwords are not matching or not in correct format.")
+
+    @staticmethod
+    def update_user_profile(uid: str, fname: str, lname: str, dob: str, phone: str):
+        user = ECOMUser.objects.get(id=uid)
+        if fname and fname != "" and fname != user.fname:
+            if validate_name(fname).is_validated:
+                user.fname = fname
+        if lname and lname != "" and lname != user.lname:
+            if validate_name(lname).is_validated:
+                user.lname = lname
+        if dob and dob != "" and dob != user.fname:
+            dob = string_to_datetime(dob)
+            if validate_dob(dob).is_validated:
+                user.dob = dob
+        if phone and phone != "" and phone != user.phone:
+            if validate_phone(phone=phone).is_validated:
+                user.phone = phone
+        user.save()
