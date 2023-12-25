@@ -55,11 +55,14 @@ def validate_user_uid(uid: str) -> ValidationResult:
 def validate_email_format(email: str) -> bool:
     regex = r"\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,7}\b"
     if re.fullmatch(regex, email):
-        domain = email.split("@")[1]
-        result = dns.resolver.resolve(domain, "MX")
-        if result:
+        if get_environment() != "DEV":
+            domain = email.split("@")[1]
+            result = dns.resolver.resolve(domain, "MX")
+            if result:
+                return True
+            return False
+        else:
             return True
-        return False
     else:
         return False
 
