@@ -12,3 +12,6 @@ class EnvironmentSettings(Enum):
     stg = "STAGING"
     prod = "PRODUCTION"
     qa = "QA"
+
+
+TRUTH_LIST = [True, "True", "T", "true", "Y", "y", 1, "1", "Yes", "yes"]

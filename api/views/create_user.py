@@ -1,6 +1,7 @@
 import logging
 
 from djongo.database import DatabaseError
+from dns.resolver import NXDOMAIN, LifetimeTimeout, YXDOMAIN, NoAnswer, NoNameservers
 from pydantic import ValidationError
 from rest_framework import status, serializers
 from rest_framework.renderers import JSONRenderer
@@ -169,6 +170,51 @@ class CreateUsersView(APIView):
                     "errorMessage": f"EmailNotSentError: {e.msg}",
                 },
                 status=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                content_type="application/json",
+            )
+        except NXDOMAIN as e:
+            return Response(
+                data={
+                    "successMessage": None,
+                    "errorMessage": f"EmailDoesNotExistsError: {e.msg}",
+                },
+                status=status.HTTP_400_BAD_REQUEST,
+                content_type="application/json",
+            )
+        except NoNameservers as e:
+            return Response(
+                data={
+                    "successMessage": None,
+                    "errorMessage": f"EmailDoesNotExistsError: {e.msg}",
+                },
+                status=status.HTTP_400_BAD_REQUEST,
+                content_type="application/json",
+            )
+        except NoAnswer as e:
+            return Response(
+                data={
+                    "successMessage": None,
+                    "errorMessage": f"EmailDoesNotExistsError: {e.msg}",
+                },
+                status=status.HTTP_400_BAD_REQUEST,
+                content_type="application/json",
+            )
+        except YXDOMAIN as e:
+            return Response(
+                data={
+                    "successMessage": None,
+                    "errorMessage": f"EmailDoesNotExistsError: {e.msg}",
+                },
+                status=status.HTTP_400_BAD_REQUEST,
+                content_type="application/json",
+            )
+        except LifetimeTimeout as e:
+            return Response(
+                data={
+                    "successMessage": None,
+                    "errorMessage": f"EmailDoesNotExistsError: {e.msg}",
+                },
+                status=status.HTTP_400_BAD_REQUEST,
                 content_type="application/json",
             )
         except ValueError as e:
