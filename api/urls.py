@@ -4,6 +4,7 @@ from api.views.all_users import AllUsersView
 from api.views.create_user import CreateUsersView
 from api.views.otp_view import SendOTPView
 from api.views.password_reset import PasswordResetView
+from api.views.remove_user import RemoveUserView
 from api.views.sign_in import SignInView
 from api.views.update_password import UpdatePasswordView
 from api.views.update_profile import UpdateProfileView
@@ -22,6 +23,7 @@ urlpatterns = [
     ),
     path("update-password", UpdatePasswordView.as_view(), name="Change-User-Password"),
     path("update-profile", UpdateProfileView.as_view(), name="Update-User-profile"),
+    path("remove-user", RemoveUserView.as_view(), name="Remove-User"),
 ]
 # path('login', UserLoginView.as_view(), name="User Login"),
 # path('profile', UserProfileView.as_view(), name="User Profile"),
