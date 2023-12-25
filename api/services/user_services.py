@@ -1,13 +1,27 @@
+import os
 from typing import Optional
 from djongo.database import DatabaseError
-from api.auth_exceptions.user_exceptions import EmailNotSentError
+from dotenv import load_dotenv
+
+from api.auth_exceptions.user_exceptions import EmailNotSentError, UserNotFoundError
 from api.models.export_models.export_user import ExportECOMUser, ExportECOMUserList
 from api.models.user import ECOMUser
 from api.serializers.ecom_user_serializer import ECOMUserSerializer
 from api.services.definitions import (
     DEFAULT_VERIFICATION_MESSAGE,
 )
+from api.services.email_services import EmailServices
+from api.services.encryption_service import EncryptionServices
+from api.services.helpers import (
+    validate_user_email,
+    validate_password,
+    validate_name,
+    validate_dob,
+    string_to_datetime,
+    validate_phone,
+)
 from api.services.otp_services.otp_services import OTPServices
+from api.services.token_generator import TokenGenerator
 
 
 class UserServices:
@@ -47,3 +61,61 @@ class UserServices:
         if email and password:
             response = ECOMUser.authenticate(email=email, password=password)
             return response
+
+    def reset_password(self, email: str) -> dict:
+        if validate_user_email(email=email).is_validated:
+            reset_url = self.generate_reset_password_url(email=email)
+            if (
+                EmailServices.send_password_reset_email_by_user_email(
+                    user_email=email, reset_url=reset_url
+                )
+                == "OK"
+            ):
+                return {
+                    "successMessage": "Password reset link sent successfully.",
+                    "errorMessage": None,
+                }
+            else:
+                raise EmailNotSentError()
+        else:
+            raise UserNotFoundError()
+
+    @staticmethod
+    def generate_reset_password_url(email: str) -> str:
+        user = ECOMUser.objects.get(email=email)
+        token = (
+            TokenGenerator()
+            .get_tokens_for_user(ExportECOMUser(**user.model_to_dict()))
+            .get("access")
+        )
+        load_dotenv()
+        FRONTEND_BASE_URL = os.environ.get("FRONTEND_BASE_URL")
+        reset_url = f"{FRONTEND_BASE_URL}/password-reset/{token}/"
+        return reset_url
+
+    @staticmethod
+    def change_password(uid: str, password1: str, password2: str):
+        user = ECOMUser.objects.get(id=uid)
+        if validate_password(password1, password2).is_validated:
+            user.password = EncryptionServices().encrypt(password1)
+            user.save()
+        else:
+            raise ValueError("Passwords are not matching or not in correct format.")
+
+    @staticmethod
+    def update_user_profile(uid: str, fname: str, lname: str, dob: str, phone: str):
+        user = ECOMUser.objects.get(id=uid)
+        if fname and fname != "" and fname != user.fname:
+            if validate_name(fname).is_validated:
+                user.fname = fname
+        if lname and lname != "" and lname != user.lname:
+            if validate_name(lname).is_validated:
+                user.lname = lname
+        if dob and dob != "" and dob != user.fname:
+            dob = string_to_datetime(dob)
+            if validate_dob(dob).is_validated:
+                user.dob = dob
+        if phone and phone != "" and phone != user.phone:
+            if validate_phone(phone=phone).is_validated:
+                user.phone = phone
+        user.save()

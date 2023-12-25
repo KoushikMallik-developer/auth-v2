@@ -3,31 +3,31 @@ import logging
 from djongo.database import DatabaseError
 from drf_yasg import openapi
 from drf_yasg.openapi import Schema
+from drf_yasg.utils import swagger_auto_schema
 from pydantic import ValidationError
-from rest_framework import status, serializers
 from rest_framework.renderers import JSONRenderer
-from rest_framework.request import Request
-from rest_framework.response import Response
 from rest_framework.views import APIView
+from rest_framework.response import Response
+from rest_framework import status, serializers
+
 
 from api.auth_exceptions.user_exceptions import (
     EmailNotSentError,
     UserNotFoundError,
-    UserNotVerifiedError,
     UserAuthenticationFailedError,
+    UserNotVerifiedError,
 )
 from api.services.user_services import UserServices
-from drf_yasg.utils import swagger_auto_schema
 
 
-class SignInView(APIView):
+class PasswordResetView(APIView):
     renderer_classes = [JSONRenderer]
 
     @swagger_auto_schema(
-        operation_summary="Sign In User",
-        operation_description="Sign In User",
+        operation_summary="Reset User Password",
+        operation_description="Reset User Password",
         request_body=Schema(
-            title="Sign-In Request",
+            title="Reset-Password Request",
             type=openapi.TYPE_OBJECT,
             properties={
                 "email": Schema(
@@ -36,23 +36,17 @@ class SignInView(APIView):
                     type=openapi.TYPE_STRING,
                     format=openapi.FORMAT_EMAIL,
                 ),
-                "password": Schema(
-                    name="password",
-                    in_=openapi.IN_BODY,
-                    type=openapi.TYPE_STRING,
-                    format=openapi.FORMAT_PASSWORD,
-                ),
             },
         ),
         responses={
             200: Schema(
-                title="Sign-In Response",
+                title="Reset-Password Response",
                 type=openapi.TYPE_OBJECT,
                 properties={
-                    "token": Schema(
-                        name="token",
+                    "successMessage": Schema(
+                        name="successMessage",
                         in_=openapi.IN_BODY,
-                        type=openapi.TYPE_OBJECT,
+                        type=openapi.TYPE_STRING,
                     ),
                     "errorMessage": Schema(
                         name="errorMessage",
@@ -62,7 +56,7 @@ class SignInView(APIView):
                 },
             ),
             "default": Schema(
-                title="Sign-In Response",
+                title="Reset-Password Response",
                 type=openapi.TYPE_OBJECT,
                 properties={
                     "successMessage": Schema(
@@ -79,28 +73,21 @@ class SignInView(APIView):
             ),
         },
     )
-    def post(self, request: Request):
+    def post(self, request):
         try:
-            request_data = request.data
-            email = request_data.get("email")
-            password = request_data.get("password")
-
-            if email and password:
-                result = UserServices.sign_in_user(
+            email = request.data["email"]
+            if email:
+                result = UserServices().reset_password(email=email)
+                return Response(
                     data={
-                        "email": email,
-                        "password": password,
-                    }
+                        "successMessage": result.get("successMessage"),
+                        "errorMessage": None,
+                    },
+                    status=status.HTTP_200_OK,
+                    content_type="application/json",
                 )
-                if result.get("token"):
-                    return Response(
-                        data={"token": result.get("token"), "errorMessage": None},
-                        status=status.HTTP_200_OK,
-                        content_type="application/json",
-                    )
             else:
-                raise ValueError("Email or Password is not in correct format")
-
+                raise ValueError("Email format is not correct.")
         except DatabaseError as e:
             logging.error(
                 f"DatabaseError: Error Occured While fetching user details: {e}"

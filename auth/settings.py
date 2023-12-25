@@ -4,13 +4,15 @@ from pathlib import Path
 
 from dotenv import load_dotenv
 
+from api.services.definitions import TRUTH_LIST
+
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 load_dotenv()
 SECRET_KEY = os.environ.get("DJANGO_SECRET_KEY")
 
 
-DEBUG = os.environ.get("DEBUG_MODE")
+DEBUG = os.environ.get("DEBUG_MODE") in TRUTH_LIST
 
 ALLOWED_HOSTS = ["*"]
 
