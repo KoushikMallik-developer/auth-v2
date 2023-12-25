@@ -10,7 +10,7 @@ load_dotenv()
 SECRET_KEY = os.environ.get("DJANGO_SECRET_KEY")
 
 
-DEBUG = os.environ.get("DEBUG_MODE")
+DEBUG = bool(os.environ.get("DEBUG_MODE"))
 
 ALLOWED_HOSTS = ["*"]
 

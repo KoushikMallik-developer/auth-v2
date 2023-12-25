@@ -11,7 +11,8 @@ from api.services.definitions import (
     DEFAULT_VERIFICATION_MESSAGE,
 )
 from api.services.email_services import EmailServices
-from api.services.helpers import validate_user_email
+from api.services.encryption_service import EncryptionServices
+from api.services.helpers import validate_user_email, validate_password
 from api.services.otp_services.otp_services import OTPServices
 from api.services.token_generator import TokenGenerator
 
@@ -84,3 +85,11 @@ class UserServices:
         FRONTEND_BASE_URL = os.environ.get("FRONTEND_BASE_URL")
         reset_url = f"{FRONTEND_BASE_URL}/password-reset/{token}/"
         return reset_url
+
+    def change_password(self, uid: str, password1: str, password2: str):
+        user = ECOMUser.objects.get(id=uid)
+        if validate_password(password1, password2).is_validated:
+            user.password = EncryptionServices().encrypt(password1)
+            user.save()
+        else:
+            raise ValueError("Passwords are not matching or not in correct format.")

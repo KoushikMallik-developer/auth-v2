@@ -5,6 +5,7 @@ from api.views.create_user import CreateUsersView
 from api.views.otp_view import SendOTPView
 from api.views.password_reset import PasswordResetView
 from api.views.sign_in import SignInView
+from api.views.update_password import UpdatePasswordView
 from api.views.validate_otp_view import ValidateOTPView
 
 urlpatterns = [
@@ -18,10 +19,10 @@ urlpatterns = [
         PasswordResetView.as_view(),
         name="send-reset-password-email",
     ),
+    path("update-password", UpdatePasswordView.as_view(), name="Change-User-Password"),
 ]
 # path('login', UserLoginView.as_view(), name="User Login"),
 # path('profile', UserProfileView.as_view(), name="User Profile"),
-# path('change_password', UserChangePasswordView.as_view(), name="Change User Password"),
 
 
 # path('reset-password/<uid>/<token>/', UserPasswordResetView.as_view(), name='reset-password'),

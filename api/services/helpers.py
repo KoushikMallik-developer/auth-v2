@@ -1,7 +1,12 @@
+import os
 import re
+
+from dotenv import load_dotenv
+from rest_framework_simplejwt.tokens import AccessToken
 
 from api.models.user import ECOMUser
 from api.models.validation_result import ValidationResult
+from api.services.definitions import EnvironmentSettings
 
 
 def validate_email(email: str) -> ValidationResult:
@@ -32,6 +37,16 @@ def validate_user_email(email: str) -> ValidationResult:
         return ValidationResult(is_validated=False, error="User does not exists.")
     else:
         return ValidationResult(is_validated=False, error="Email format is not correct")
+
+
+def validate_user_uid(uid: str) -> ValidationResult:
+    existing_account = True if ECOMUser.objects.filter(id=uid).count() > 0 else False
+    if existing_account:
+        return ValidationResult(
+            is_validated=True,
+            error=None,
+        )
+    return ValidationResult(is_validated=False, error="User does not exists.")
 
 
 def validate_email_format(email: str) -> bool:
@@ -81,3 +96,17 @@ def validate_password(password1: str, password2: str) -> ValidationResult:
         )
     else:
         return ValidationResult(is_validated=False, error="Passwords did not match")
+
+
+def decode_jwt_token(request) -> str:
+    token = request.headers.get("Authorization", "").split(" ")[1]
+    token = AccessToken(token)
+    payload = token.payload
+    user_id = payload.get("user_id")
+    return user_id
+
+
+def get_environment() -> str:
+    load_dotenv()
+    env = os.environ.get("ENVIRONMENT_SETTINGS")
+    return EnvironmentSettings[env].value
