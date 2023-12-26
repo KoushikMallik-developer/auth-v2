@@ -1,6 +1,6 @@
 import logging
 
-from djongo.database import DatabaseError
+from psycopg2 import DatabaseError
 from pydantic import ValidationError
 from rest_framework import status
 from rest_framework.renderers import JSONRenderer

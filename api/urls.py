@@ -1,5 +1,6 @@
 from django.urls import path
 
+from api.views.add_delivery_address import AddDeliveryAddress
 from api.views.all_users import AllUsersView
 from api.views.create_user import CreateUsersView
 from api.views.otp_view import SendOTPView
@@ -24,6 +25,11 @@ urlpatterns = [
     path("update-password", UpdatePasswordView.as_view(), name="Change-User-Password"),
     path("update-profile", UpdateProfileView.as_view(), name="Update-User-profile"),
     path("remove-user", RemoveUserView.as_view(), name="Remove-User"),
+    path(
+        "add-delivery-address",
+        AddDeliveryAddress.as_view(),
+        name="Add-Delivery-Address",
+    ),
 ]
 # path('login', UserLoginView.as_view(), name="User Login"),
 # path('profile', UserProfileView.as_view(), name="User Profile"),

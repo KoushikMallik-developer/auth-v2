@@ -1,14 +1,16 @@
 import os
 from typing import Optional
-from djongo.database import DatabaseError
 from dotenv import load_dotenv
+from psycopg2 import DatabaseError
 
 from api.auth_exceptions.user_exceptions import EmailNotSentError, UserNotFoundError
+from api.models.delivery_address import DeliveryAddress
 from api.models.export_models.export_user import ExportECOMUser, ExportECOMUserList
 from api.models.user import ECOMUser
 from api.serializers.ecom_user_serializer import ECOMUserSerializer
 from api.services.definitions import (
     DEFAULT_VERIFICATION_MESSAGE,
+    TRUTH_LIST,
 )
 from api.services.email_services import EmailServices
 from api.services.encryption_service import EncryptionServices
@@ -19,6 +21,7 @@ from api.services.helpers import (
     validate_dob,
     string_to_datetime,
     validate_phone,
+    validate_pin,
 )
 from api.services.otp_services.otp_services import OTPServices
 from api.services.token_generator import TokenGenerator
@@ -119,3 +122,70 @@ class UserServices:
             if validate_phone(phone=phone).is_validated:
                 user.phone = phone
         user.save()
+
+    @staticmethod
+    def add_delivery_address(
+        uid: str,
+        address_line1: str,
+        address_line2: str,
+        state: str,
+        city: str,
+        country: str,
+        pin: str,
+        landmark: str,
+        address_type: str,
+        is_default: str,
+        delivery_to_phone: str,
+        delivery_to_person_name: str,
+    ):
+        user = ECOMUser.objects.get(id=uid)
+        address = DeliveryAddress()
+        address.user = user
+        if address_line1 and address_line1 != "" and isinstance(address_line1, str):
+            address.address_line1 = address_line1
+        if address_line2 and address_line2 != "" and isinstance(address_line2, str):
+            address.address_line2 = address_line2
+        if state and state != "" and isinstance(state, str):
+            address.state = state
+        if city and city != "" and isinstance(city, str):
+            address.city = city
+        if country and country != "" and isinstance(country, str):
+            address.country = country
+        if pin and pin != "" and isinstance(pin, str):
+            if validate_pin(pin):
+                address.pin = pin
+            else:
+                raise ValueError("PIN is not valid.")
+        if landmark and landmark != "" and isinstance(landmark, str):
+            address.landmark = landmark
+        if address_type and address_type != "" and isinstance(address_type, str):
+            address.address_type = address_type
+        if is_default in TRUTH_LIST:
+            address.is_default = is_default
+        if (
+            delivery_to_phone
+            and delivery_to_phone != ""
+            and isinstance(delivery_to_phone, str)
+        ):
+            if validate_phone(phone=delivery_to_phone).is_validated:
+                address.delivery_to_phone = delivery_to_phone
+            else:
+                raise ValueError("Phone Number is not valid.")
+        if (
+            delivery_to_person_name
+            and delivery_to_person_name != ""
+            and isinstance(delivery_to_person_name, str)
+        ):
+            address.delivery_to_person_name = delivery_to_person_name
+        if (
+            address_line1
+            and city
+            and state
+            and country
+            and pin
+            and delivery_to_phone
+            and delivery_to_person_name
+        ):
+            address.save()
+        else:
+            raise ValueError("Address details are not valid.")

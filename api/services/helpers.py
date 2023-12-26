@@ -152,3 +152,13 @@ def validate_phone(phone: str) -> ValidationResult:
         return ValidationResult(
             is_validated=False, error="Phone number is not in valid format."
         )
+
+
+def validate_pin(pin: str) -> ValidationResult:
+    # pattern = re.compile(r"^\+?[0-9]+\s?[0-9]*$")
+    # if pattern.match(phone):
+    return ValidationResult(is_validated=True, error=None)
+    # else:
+    #     return ValidationResult(
+    #         is_validated=False, error="Phone number is not in valid format."
+    #     )

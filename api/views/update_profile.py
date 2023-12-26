@@ -1,6 +1,6 @@
 import logging
 
-from djongo.database import DatabaseError
+from psycopg2 import DatabaseError
 from drf_yasg import openapi
 from drf_yasg.openapi import Schema
 from drf_yasg.utils import swagger_auto_schema
@@ -95,10 +95,10 @@ class UpdateProfileView(APIView):
             if validate_user_uid(uid=user_id).is_validated:
                 UserServices().update_user_profile(
                     uid=user_id,
-                    fname=request.data["fname"],
-                    lname=request.data["lname"],
-                    dob=request.data["dob"],
-                    phone=request.data["phone"],
+                    fname=request.data.get("fname"),
+                    lname=request.data.get("lname"),
+                    dob=request.data.get("dob"),
+                    phone=request.data.get("phone"),
                 )
                 return Response(
                     data={

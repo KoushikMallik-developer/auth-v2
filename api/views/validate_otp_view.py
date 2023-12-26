@@ -17,6 +17,7 @@ from api.auth_exceptions.user_exceptions import (
     OTPNotVerifiedError,
     EmailNotSentError,
 )
+from api.models.export_models.export_user import ExportECOMUser
 from api.models.user import ECOMUser
 from api.services.helpers import validate_email_format
 from api.services.otp_services.otp_services import OTPServices
@@ -94,6 +95,7 @@ class ValidateOTPView(APIView):
 
                 if user_exists:
                     user = ECOMUser.objects.get(email=email)
+                    user = ExportECOMUser(**user.model_to_dict())
                     if not user.is_active:
                         response = OTPServices().verify_otp(user, otp)
                         if response:

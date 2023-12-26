@@ -4,6 +4,7 @@ from api.auth_exceptions.user_exceptions import (
     UserAuthenticationFailedError,
 )
 from api.models.abstract_user import AbstractUser
+from api.models.export_models.export_user import ExportECOMUser
 from api.services.encryption_service import EncryptionServices
 from api.services.token_generator import TokenGenerator
 
@@ -25,7 +26,9 @@ class ECOMUser(AbstractUser):
             if user:
                 if user.is_active:
                     if EncryptionServices().decrypt(user.password) == password:
-                        token = TokenGenerator().get_tokens_for_user(user)
+                        token = TokenGenerator().get_tokens_for_user(
+                            ExportECOMUser(**user.model_to_dict())
+                        )
                         return {
                             "token": token,
                             "errorMessage": None,
