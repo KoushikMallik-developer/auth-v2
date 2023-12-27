@@ -5,48 +5,42 @@ from drf_yasg import openapi
 from drf_yasg.openapi import Schema
 from drf_yasg.utils import swagger_auto_schema
 from pydantic import ValidationError
+from rest_framework import serializers, status
 from rest_framework.renderers import JSONRenderer
-from rest_framework.views import APIView
 from rest_framework.response import Response
-from rest_framework import status, serializers
-
+from rest_framework.views import APIView
+from rest_framework_simplejwt.exceptions import TokenError
 
 from api.auth_exceptions.user_exceptions import (
     EmailNotSentError,
-    UserNotFoundError,
     UserAuthenticationFailedError,
+    UserNotFoundError,
     UserNotVerifiedError,
 )
+from api.services.helpers import decode_jwt_token, validate_user_uid
 from api.services.user_services import UserServices
 
 
-class PasswordResetView(APIView):
+class UserDetailView(APIView):
     renderer_classes = [JSONRenderer]
 
     @swagger_auto_schema(
-        operation_summary="Reset User Password",
-        operation_description="Reset User Password",
-        request_body=Schema(
-            title="Reset-Password Request",
-            type=openapi.TYPE_OBJECT,
-            properties={
-                "email": Schema(
-                    name="email",
-                    in_=openapi.IN_BODY,
-                    type=openapi.TYPE_STRING,
-                    format=openapi.FORMAT_EMAIL,
-                ),
-            },
-        ),
+        operation_summary="Get User Details",
+        operation_description="Get User Details",
         responses={
             200: Schema(
-                title="Reset-Password Response",
+                title="Get-User-Details Response",
                 type=openapi.TYPE_OBJECT,
                 properties={
                     "successMessage": Schema(
                         name="successMessage",
                         in_=openapi.IN_BODY,
                         type=openapi.TYPE_STRING,
+                    ),
+                    "data": Schema(
+                        name="successMessage",
+                        in_=openapi.IN_BODY,
+                        type=openapi.TYPE_OBJECT,
                     ),
                     "errorMessage": Schema(
                         name="errorMessage",
@@ -56,7 +50,7 @@ class PasswordResetView(APIView):
                 },
             ),
             "default": Schema(
-                title="Reset-Password Response",
+                title="Get-User-Details Response",
                 type=openapi.TYPE_OBJECT,
                 properties={
                     "successMessage": Schema(
@@ -73,21 +67,32 @@ class PasswordResetView(APIView):
             ),
         },
     )
-    def post(self, request):
+    def get(self, request):
         try:
-            email = request.data.get("email")
-            if email:
-                result = UserServices().reset_password(email=email)
+            user_id = decode_jwt_token(request=request)
+            if validate_user_uid(uid=user_id).is_validated:
+                user_details = UserServices().get_user_details(uid=user_id)
                 return Response(
                     data={
-                        "successMessage": result.get("successMessage"),
+                        "successMessage": "User details updated Successfully.",
+                        "data": user_details.model_dump(),
                         "errorMessage": None,
                     },
                     status=status.HTTP_200_OK,
                     content_type="application/json",
                 )
             else:
-                raise ValueError("Email format is not correct.")
+                raise TokenError()
+        except TokenError as e:
+            logging.error(f"TokenError: {str(e)}")
+            return Response(
+                data={
+                    "successMessage": None,
+                    "errorMessage": f"TokenError: {str(e)}",
+                },
+                status=status.HTTP_401_UNAUTHORIZED,
+                content_type="application/json",
+            )
         except DatabaseError as e:
             logging.error(
                 f"DatabaseError: Error Occured While fetching user details: {e}"

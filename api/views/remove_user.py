@@ -1,6 +1,6 @@
 import logging
 
-from djongo.database import DatabaseError
+from psycopg2 import DatabaseError
 from drf_yasg import openapi
 from drf_yasg.openapi import Schema
 from drf_yasg.utils import swagger_auto_schema
@@ -75,7 +75,7 @@ class RemoveUserView(APIView):
     )
     def post(self, request):
         try:
-            email = request.data["email"]
+            email = request.data.get("email")
             if validate_user_email(email=email).is_validated:
                 ECOMUser.objects.get(email=email).delete()
                 return Response(

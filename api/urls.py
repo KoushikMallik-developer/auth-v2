@@ -1,6 +1,8 @@
 from django.urls import path
 
+from api.views.add_delivery_address import AddDeliveryAddress
 from api.views.all_users import AllUsersView
+from api.views.clear_server_cache import ClearServerCaches
 from api.views.create_user import CreateUsersView
 from api.views.otp_view import SendOTPView
 from api.views.password_reset import PasswordResetView
@@ -8,6 +10,7 @@ from api.views.remove_user import RemoveUserView
 from api.views.sign_in import SignInView
 from api.views.update_password import UpdatePasswordView
 from api.views.update_profile import UpdateProfileView
+from api.views.user_details import UserDetailView
 from api.views.validate_otp_view import ValidateOTPView
 
 urlpatterns = [
@@ -24,9 +27,16 @@ urlpatterns = [
     path("update-password", UpdatePasswordView.as_view(), name="Change-User-Password"),
     path("update-profile", UpdateProfileView.as_view(), name="Update-User-profile"),
     path("remove-user", RemoveUserView.as_view(), name="Remove-User"),
+    path(
+        "add-delivery-address",
+        AddDeliveryAddress.as_view(),
+        name="Add-Delivery-Address",
+    ),
+    path("user-details", UserDetailView.as_view(), name="user-details"),
+    path("clear-caches", ClearServerCaches.as_view(), name="clear-caches"),
 ]
 # path('login', UserLoginView.as_view(), name="User Login"),
-# path('profile', UserProfileView.as_view(), name="User Profile"),
+# path('profile', UserDetailView.as_view(), name="User Profile"),
 
 
 # path('reset-password/<uid>/<token>/', UserPasswordResetView.as_view(), name='reset-password'),

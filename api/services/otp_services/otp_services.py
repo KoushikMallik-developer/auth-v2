@@ -14,7 +14,7 @@ from api.services.otp_services.otp_generator import OTPGenerator
 class OTPServices:
     def __init__(self):
         self.KEYWORD_PREFIX = "_VERIFICATION_OTP"
-        self.expiration_time = 900
+        self.expiration_time = 840
 
     def send_otp_to_user(self, user_email: str) -> Optional[str]:
         email_services = EmailServices()
@@ -25,26 +25,8 @@ class OTPServices:
             response = email_services.send_otp_email_by_user_email(
                 user_email=user_email, otp=base64.b64decode(cached_data).decode("utf-8")
             )
-        elif (
-            ECOMEmailVerification.objects.filter(
-                user=db_user, expiration_time__gte=timezone.now()
-            ).count()
-            > 0
-        ):
-            verification_data: ECOMEmailVerification = (
-                ECOMEmailVerification.objects.get(
-                    user=db_user, expiration_time__gte=timezone.now()
-                )
-            )
-            cache.set(
-                cache_keyword,
-                base64.b64encode(verification_data.code.encode("utf-8")),
-                self.expiration_time,
-            )
-            response = email_services.send_otp_email_by_user_email(
-                user_email=user_email, otp=verification_data.code
-            )
         else:
+            ECOMEmailVerification.objects.filter(user=db_user).delete()
             verification_data: ECOMEmailVerification = self.__create_otp(user=db_user)
             cache.set(
                 cache_keyword,
@@ -69,12 +51,8 @@ class OTPServices:
             ecom_verification_obj = ECOMEmailVerification.objects.get(
                 user=user, code=otp, expiration_time__gte=timezone.now()
             )
-            if not ecom_verification_obj.is_used:
-                ecom_verification_obj.is_used = True
-                ecom_verification_obj.save()
-                return True
-            else:
-                return False
+            ecom_verification_obj.delete()
+            return True
         except Exception:
             return False
 

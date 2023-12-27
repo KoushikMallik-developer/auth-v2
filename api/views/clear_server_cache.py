@@ -1,46 +1,34 @@
 import logging
 
+from django_redis import get_redis_connection
 from psycopg2 import DatabaseError
 from drf_yasg import openapi
 from drf_yasg.openapi import Schema
 from drf_yasg.utils import swagger_auto_schema
 from pydantic import ValidationError
+from rest_framework import serializers, status
 from rest_framework.renderers import JSONRenderer
-from rest_framework.views import APIView
 from rest_framework.response import Response
-from rest_framework import status, serializers
-
+from rest_framework.views import APIView
+from rest_framework_simplejwt.exceptions import TokenError
 
 from api.auth_exceptions.user_exceptions import (
     EmailNotSentError,
-    UserNotFoundError,
     UserAuthenticationFailedError,
+    UserNotFoundError,
     UserNotVerifiedError,
 )
-from api.services.user_services import UserServices
 
 
-class PasswordResetView(APIView):
+class ClearServerCaches(APIView):
     renderer_classes = [JSONRenderer]
 
     @swagger_auto_schema(
-        operation_summary="Reset User Password",
-        operation_description="Reset User Password",
-        request_body=Schema(
-            title="Reset-Password Request",
-            type=openapi.TYPE_OBJECT,
-            properties={
-                "email": Schema(
-                    name="email",
-                    in_=openapi.IN_BODY,
-                    type=openapi.TYPE_STRING,
-                    format=openapi.FORMAT_EMAIL,
-                ),
-            },
-        ),
+        operation_summary="Clear Server Caches",
+        operation_description="Clear Server Caches",
         responses={
             200: Schema(
-                title="Reset-Password Response",
+                title="Clear-Server-Caches Response",
                 type=openapi.TYPE_OBJECT,
                 properties={
                     "successMessage": Schema(
@@ -56,7 +44,7 @@ class PasswordResetView(APIView):
                 },
             ),
             "default": Schema(
-                title="Reset-Password Response",
+                title="Clear-Server-Caches Response",
                 type=openapi.TYPE_OBJECT,
                 properties={
                     "successMessage": Schema(
@@ -73,21 +61,27 @@ class PasswordResetView(APIView):
             ),
         },
     )
-    def post(self, request):
+    def get(self, _):
         try:
-            email = request.data.get("email")
-            if email:
-                result = UserServices().reset_password(email=email)
-                return Response(
-                    data={
-                        "successMessage": result.get("successMessage"),
-                        "errorMessage": None,
-                    },
-                    status=status.HTTP_200_OK,
-                    content_type="application/json",
-                )
-            else:
-                raise ValueError("Email format is not correct.")
+            get_redis_connection("default").flushall()
+            return Response(
+                data={
+                    "successMessage": "Server caches cleared Successfully.",
+                    "errorMessage": None,
+                },
+                status=status.HTTP_200_OK,
+                content_type="application/json",
+            )
+        except TokenError as e:
+            logging.error(f"TokenError: {str(e)}")
+            return Response(
+                data={
+                    "successMessage": None,
+                    "errorMessage": f"TokenError: {str(e)}",
+                },
+                status=status.HTTP_401_UNAUTHORIZED,
+                content_type="application/json",
+            )
         except DatabaseError as e:
             logging.error(
                 f"DatabaseError: Error Occured While fetching user details: {e}"
