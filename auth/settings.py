@@ -69,6 +69,17 @@ TEMPLATES = [
 
 WSGI_APPLICATION = "auth.wsgi.application"
 
+DATABASES = {
+    "default": {
+        "ENGINE": "django.db.backends.postgresql",
+        "NAME": os.environ.get("DB_NAME"),
+        "USER": os.environ.get("DB_USERNAME"),
+        "PASSWORD": os.environ.get("DB_PASSWORD"),
+        "HOST": os.environ.get("DB_HOST"),
+        "PORT": os.environ.get("DB_PORT"),
+    }
+}
+
 # DATABASES = {
 #     "default": {
 #         "ENGINE": "django.db.backends.sqlite3",
@@ -76,14 +87,14 @@ WSGI_APPLICATION = "auth.wsgi.application"
 #     }
 # }
 
-DATABASES = {
-    "default": {
-        "ENGINE": "djongo",
-        "NAME": "auth",
-        "ENFORCE_SCHEMA": False,
-        "CLIENT": {"host": os.environ.get("MONGODB_HOST")},
-    }
-}
+# DATABASES = {
+#     "default": {
+#         "ENGINE": "djongo",
+#         "NAME": "auth",
+#         "ENFORCE_SCHEMA": False,
+#         "CLIENT": {"host": os.environ.get("MONGODB_HOST")},
+#     }
+# }
 
 LANGUAGE_CODE = "en-us"
 
@@ -107,10 +118,10 @@ REST_FRAMEWORK = {
 }
 SIMPLE_JWT = {
     "ACCESS_TOKEN_LIFETIME": timedelta(
-        minutes=5
+        days=1
     ),  # Lifetime can be anything of our choice.
     "REFRESH_TOKEN_LIFETIME": timedelta(
-        days=1
+        days=7
     ),  # Lifetime can be anything of our choice.
     "ROTATE_REFRESH_TOKENS": False,
     "BLACKLIST_AFTER_ROTATION": False,

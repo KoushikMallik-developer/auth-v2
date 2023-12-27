@@ -3,3 +3,9 @@ ACCOUNT_TYPE_CHOICES = [
     ("seller", "Seller"),
     ("admin", "Admin"),
 ]
+
+ADDRESS_TYPE_CHOICES = [
+    ("home", "Home"),
+    ("hotel", "Hotel"),
+    ("office", "Office"),
+]

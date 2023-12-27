@@ -1,6 +1,6 @@
 import logging
 
-from djongo.database import DatabaseError
+from psycopg2 import DatabaseError
 from drf_yasg import openapi
 from drf_yasg.openapi import Schema
 from drf_yasg.utils import swagger_auto_schema
@@ -86,8 +86,8 @@ class UpdatePasswordView(APIView):
             if validate_user_uid(uid=user_id).is_validated:
                 UserServices().change_password(
                     uid=user_id,
-                    password1=request.data["password1"],
-                    password2=request.data["password2"],
+                    password1=request.data.get("password1"),
+                    password2=request.data.get("password2"),
                 )
                 return Response(
                     data={
