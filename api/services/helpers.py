@@ -154,11 +154,18 @@ def validate_phone(phone: str) -> ValidationResult:
         )
 
 
-def validate_pin(pin: str) -> ValidationResult:
-    # pattern = re.compile(r"^\+?[0-9]+\s?[0-9]*$")
-    # if pattern.match(phone):
-    return ValidationResult(is_validated=True, error=None)
-    # else:
-    #     return ValidationResult(
-    #         is_validated=False, error="Phone number is not in valid format."
-    #     )
+def validate_pin(pincode: str) -> ValidationResult:
+    if re.match(r"^\d{6}$", pincode):
+        first_digit = int(pincode[0])
+        if 1 <= first_digit <= 9:
+            return ValidationResult(is_validated=True, error=None)
+        else:
+            return ValidationResult(
+                is_validated=False,
+                error="Invalid PIN code. The first digit should be between 1 and 9.",
+            )
+    else:
+        print("Invalid PIN code. It should be a 6-digit number.")
+        return ValidationResult(
+            is_validated=False, error="Invalid PIN code. It should be a 6-digit number."
+        )

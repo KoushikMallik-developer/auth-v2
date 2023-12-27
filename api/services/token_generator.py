@@ -16,7 +16,7 @@ class TokenGenerator:
             refresh = RefreshToken.for_user(user)
             cache.set(
                 cache_keyword,
-                {"refresh": refresh, "access": refresh.access_token},
+                {"refresh": str(refresh), "access": str(refresh.access_token)},
                 self.expiration_time,
             )
             return {

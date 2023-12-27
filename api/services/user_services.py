@@ -152,10 +152,11 @@ class UserServices:
         if country and country != "" and isinstance(country, str):
             address.country = country
         if pin and pin != "" and isinstance(pin, str):
-            if validate_pin(pin):
+            pincode_validation_result = validate_pin(pin)
+            if pincode_validation_result.is_validated:
                 address.pin = pin
             else:
-                raise ValueError("PIN is not valid.")
+                raise ValueError(pincode_validation_result.error)
         if landmark and landmark != "" and isinstance(landmark, str):
             address.landmark = landmark
         if address_type and address_type != "" and isinstance(address_type, str):
@@ -178,14 +179,20 @@ class UserServices:
         ):
             address.delivery_to_person_name = delivery_to_person_name
         if (
-            address_line1
-            and city
-            and state
-            and country
-            and pin
-            and delivery_to_phone
-            and delivery_to_person_name
+            address.address_line1
+            and address.city
+            and address.state
+            and address.country
+            and address.pin
+            and address.delivery_to_phone
+            and address.delivery_to_person_name
         ):
             address.save()
         else:
             raise ValueError("Address details are not valid.")
+
+    @staticmethod
+    def get_user_details(uid: str) -> ExportECOMUser:
+        user = ECOMUser.objects.get(id=uid)
+        user_details = ExportECOMUser(with_address=True, **user.model_to_dict())
+        return user_details
