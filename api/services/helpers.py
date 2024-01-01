@@ -6,8 +6,8 @@ import dns
 from dotenv import load_dotenv
 from rest_framework_simplejwt.tokens import AccessToken
 
-from api.models.user import ECOMUser
-from api.models.validation_result import ValidationResult
+from api.models.user_models.user import ECOMUser
+from api.models.export_types.validation_types.validation_result import ValidationResult
 from api.services.definitions import EnvironmentSettings
 from dateutil.parser import parse
 
@@ -168,4 +168,14 @@ def validate_pin(pincode: str) -> ValidationResult:
         print("Invalid PIN code. It should be a 6-digit number.")
         return ValidationResult(
             is_validated=False, error="Invalid PIN code. It should be a 6-digit number."
+        )
+
+
+def validate_gstin(gstin: str) -> ValidationResult:
+    if gstin.isalnum() and len(gstin) == 15:
+        return ValidationResult(is_validated=True, error=None)
+    else:
+        return ValidationResult(
+            is_validated=False,
+            error="Invalid GSTIN Number. It should be a 15 digit number.",
         )
