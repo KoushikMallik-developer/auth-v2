@@ -16,7 +16,7 @@ from api.auth_exceptions.user_exceptions import (
     UserNotVerifiedError,
     UserAuthenticationFailedError,
 )
-from api.services.user_services import UserServices
+from api.services.user_services.user_services import UserServices
 from drf_yasg.utils import swagger_auto_schema
 
 

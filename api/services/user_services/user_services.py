@@ -12,7 +12,7 @@ from api.services.definitions import (
     DEFAULT_VERIFICATION_MESSAGE,
     TRUTH_LIST,
 )
-from api.services.email_services import EmailServices
+from api.services.email_services.email_services import EmailServices
 from api.services.encryption_services.encryption_service import EncryptionServices
 from api.services.helpers import (
     validate_user_email,

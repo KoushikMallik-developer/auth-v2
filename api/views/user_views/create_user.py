@@ -14,7 +14,7 @@ from drf_yasg.openapi import Schema
 from drf_yasg.utils import swagger_auto_schema
 
 from api.auth_exceptions.user_exceptions import EmailNotSentError
-from api.services.user_services import UserServices
+from api.services.user_services.user_services import UserServices
 
 
 class CreateUsersView(APIView):

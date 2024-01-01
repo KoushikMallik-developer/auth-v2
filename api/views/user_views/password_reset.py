@@ -17,7 +17,7 @@ from api.auth_exceptions.user_exceptions import (
     UserAuthenticationFailedError,
     UserNotVerifiedError,
 )
-from api.services.user_services import UserServices
+from api.services.user_services.user_services import UserServices
 
 
 class PasswordResetView(APIView):

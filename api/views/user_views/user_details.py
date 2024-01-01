@@ -18,7 +18,7 @@ from api.auth_exceptions.user_exceptions import (
     UserNotVerifiedError,
 )
 from api.services.helpers import decode_jwt_token, validate_user_uid
-from api.services.user_services import UserServices
+from api.services.user_services.user_services import UserServices
 
 
 class UserDetailView(APIView):

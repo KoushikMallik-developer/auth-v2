@@ -13,7 +13,7 @@ from drf_yasg.utils import swagger_auto_schema
 
 
 from api.models.export_types.export_user import ExportECOMUserList
-from api.services.user_services import UserServices
+from api.services.user_services.user_services import UserServices
 
 
 class AllUsersView(APIView):

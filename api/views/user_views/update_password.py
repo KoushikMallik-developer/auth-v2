@@ -18,7 +18,7 @@ from api.auth_exceptions.user_exceptions import (
     UserNotVerifiedError,
 )
 from api.services.helpers import validate_user_uid, decode_jwt_token
-from api.services.user_services import UserServices
+from api.services.user_services.user_services import UserServices
 
 
 class UpdatePasswordView(APIView):
