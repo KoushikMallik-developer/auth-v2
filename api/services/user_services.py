@@ -37,7 +37,9 @@ class UserServices:
         if users:
             all_user_details = []
             for user in users:
-                user_export_details = ExportECOMUser(**user.model_to_dict())
+                user_export_details = ExportECOMUser(
+                    with_id=False, **user.model_to_dict()
+                )
                 all_user_details.append(user_export_details)
             all_user_details = ExportECOMUserList(user_list=all_user_details)
             return all_user_details
@@ -106,8 +108,12 @@ class UserServices:
             raise ValueError("Passwords are not matching or not in correct format.")
 
     @staticmethod
-    def update_user_profile(uid: str, fname: str, lname: str, dob: str, phone: str):
+    def update_user_profile(
+        uid: str, fname: str, lname: str, dob: str, phone: str, image: str
+    ):
         user = ECOMUser.objects.get(id=uid)
+        if image and image != "" and image != user.image:
+            user.image = image
         if fname and fname != "" and fname != user.fname:
             if validate_name(fname).is_validated:
                 user.fname = fname
@@ -122,6 +128,75 @@ class UserServices:
             if validate_phone(phone=phone).is_validated:
                 user.phone = phone
         user.save()
+
+    @staticmethod
+    def update_delivery_address(
+        uid: str,
+        address_uid: str,
+        address_line1: str,
+        address_line2: str,
+        state: str,
+        city: str,
+        country: str,
+        pin: str,
+        landmark: str,
+        address_type: str,
+        is_default: str,
+        delivery_to_phone: str,
+        delivery_to_person_name: str,
+    ):
+        if DeliveryAddress.objects.filter(id=address_uid, user__id=uid).exists():
+            address: DeliveryAddress = DeliveryAddress.objects.get(
+                id=address_uid, user__id=uid
+            )
+        else:
+            raise ValueError("Address not found.")
+        if (
+            address_line1
+            and address_line1 != ""
+            and address_line1 != address.address_line1
+        ):
+            address.address_line1 = address_line1
+        if (
+            address_line2
+            and address_line2 != ""
+            and address_line2 != address.address_line2
+        ):
+            address.address_line2 = address_line2
+        if state and state != "" and isinstance(state, str):
+            address.state = state
+        if city and city != "" and isinstance(city, str):
+            address.city = city
+        if country and country != "" and isinstance(country, str):
+            address.country = country
+        if pin and pin != "" and isinstance(pin, str):
+            pincode_validation_result = validate_pin(pin)
+            if pincode_validation_result.is_validated:
+                address.pin = pin
+            else:
+                raise ValueError(pincode_validation_result.error)
+        if landmark and landmark != "" and isinstance(landmark, str):
+            address.landmark = landmark
+        if address_type and address_type != "" and isinstance(address_type, str):
+            address.address_type = address_type
+        if is_default in TRUTH_LIST:
+            address.is_default = is_default
+        if (
+            delivery_to_phone
+            and delivery_to_phone != ""
+            and isinstance(delivery_to_phone, str)
+        ):
+            if validate_phone(phone=delivery_to_phone).is_validated:
+                address.delivery_to_phone = delivery_to_phone
+            else:
+                raise ValueError("Phone Number is not valid.")
+        if (
+            delivery_to_person_name
+            and delivery_to_person_name != ""
+            and isinstance(delivery_to_person_name, str)
+        ):
+            address.delivery_to_person_name = delivery_to_person_name
+        address.save()
 
     @staticmethod
     def add_delivery_address(
@@ -194,5 +269,7 @@ class UserServices:
     @staticmethod
     def get_user_details(uid: str) -> ExportECOMUser:
         user = ECOMUser.objects.get(id=uid)
-        user_details = ExportECOMUser(with_address=True, **user.model_to_dict())
+        user_details = ExportECOMUser(
+            with_id=False, with_address=True, **user.model_to_dict()
+        )
         return user_details

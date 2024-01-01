@@ -162,13 +162,11 @@ class AddDeliveryAddress(APIView):
                 content_type="application/json",
             )
         except DatabaseError as e:
-            logging.error(
-                f"DatabaseError: Error Occured While fetching user details: {e}"
-            )
+            logging.error(f"DatabaseError: Error Occured While fetching details: {e}")
             return Response(
                 data={
                     "successMessage": None,
-                    "errorMessage": f"DatabaseError: Error Occured While fetching user details: {e}",
+                    "errorMessage": f"DatabaseError: Error Occured While fetching details: {e}",
                 },
                 status=status.HTTP_500_INTERNAL_SERVER_ERROR,
                 content_type="application/json",

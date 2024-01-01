@@ -13,11 +13,7 @@ class AbstractUser(BaseUser):
     password = models.CharField(max_length=255, null=False)
     dob = models.DateField(null=True)
     phone = models.CharField(max_length=15, null=True)
-    image = models.ImageField(
-        upload_to="images/users/",
-        default="images/users/defaultUserImage.png",
-        null=True,
-    )
+    image = models.CharField(max_length=2555, null=True)
     is_active = models.BooleanField(default=False)
 
     class Meta:

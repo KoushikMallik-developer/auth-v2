@@ -21,7 +21,7 @@ from api.services.helpers import decode_jwt_token, validate_user_uid
 from api.services.user_services import UserServices
 
 
-class UpdateProfileView(APIView):
+class UpdateDeliveryAddress(APIView):
     renderer_classes = [JSONRenderer]
 
     @swagger_auto_schema(
@@ -93,17 +93,24 @@ class UpdateProfileView(APIView):
         try:
             user_id = decode_jwt_token(request=request)
             if validate_user_uid(uid=user_id).is_validated:
-                UserServices().update_user_profile(
+                UserServices().update_delivery_address(
                     uid=user_id,
-                    fname=request.data.get("fname"),
-                    lname=request.data.get("lname"),
-                    dob=request.data.get("dob"),
-                    phone=request.data.get("phone"),
-                    image=request.data.get("image"),
+                    address_uid=request.data.get("address_uid"),
+                    address_line1=request.data.get("address_line1"),
+                    address_line2=request.data.get("address_line2"),
+                    state=request.data.get("state"),
+                    city=request.data.get("city"),
+                    country=request.data.get("country"),
+                    pin=request.data.get("pin"),
+                    landmark=request.data.get("landmark"),
+                    address_type=request.data.get("address_type"),
+                    is_default=request.data.get("is_default"),
+                    delivery_to_phone=request.data.get("delivery_to_phone"),
+                    delivery_to_person_name=request.data.get("delivery_to_person_name"),
                 )
                 return Response(
                     data={
-                        "successMessage": "User details updated Successfully.",
+                        "successMessage": "Delivery Address details updated successfully.",
                         "errorMessage": None,
                     },
                     status=status.HTTP_200_OK,

@@ -12,7 +12,7 @@ from api.models.export_models.export_delivery_address import (
 
 
 class ExportECOMUser(BaseModel):
-    id: UUID
+    id: Optional[UUID]
     username: str
     email: str
     fname: str
@@ -26,13 +26,7 @@ class ExportECOMUser(BaseModel):
     created_at: datetime.datetime
     updated_at: datetime.datetime
 
-    def __init__(self, with_address: bool = False, **kwargs):
-        if kwargs.get("image"):
-            if not isinstance(kwargs.get("image"), str):
-                kwargs["image"] = kwargs.get("image").url
-            else:
-                kwargs["image"] = None
-
+    def __init__(self, with_id: bool = True, with_address: bool = False, **kwargs):
         from api.models.delivery_address import DeliveryAddress
 
         if with_address:
@@ -44,6 +38,8 @@ class ExportECOMUser(BaseModel):
                 ]
             )
             kwargs["delivery_address_list"] = address_list
+        if not with_id:
+            kwargs["id"] = None
         super().__init__(**kwargs)
 
 

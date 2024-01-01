@@ -8,6 +8,7 @@ from api.views.otp_view import SendOTPView
 from api.views.password_reset import PasswordResetView
 from api.views.remove_user import RemoveUserView
 from api.views.sign_in import SignInView
+from api.views.update_delivery_address import UpdateDeliveryAddress
 from api.views.update_password import UpdatePasswordView
 from api.views.update_profile import UpdateProfileView
 from api.views.user_details import UserDetailView
@@ -32,17 +33,11 @@ urlpatterns = [
         AddDeliveryAddress.as_view(),
         name="Add-Delivery-Address",
     ),
+    path(
+        "update-delivery-address",
+        UpdateDeliveryAddress.as_view(),
+        name="Add-Delivery-Address",
+    ),
     path("user-details", UserDetailView.as_view(), name="user-details"),
     path("clear-caches", ClearServerCaches.as_view(), name="clear-caches"),
 ]
-# path('login', UserLoginView.as_view(), name="User Login"),
-# path('profile', UserDetailView.as_view(), name="User Profile"),
-
-
-# path('reset-password/<uid>/<token>/', UserPasswordResetView.as_view(), name='reset-password'),
-
-# path('generate-verification-otp', GenerateEmailOTPView.as_view(),
-# name='generate-verification-otp'),
-
-# path('verify-email', VerifyOTPView.as_view(), name='verify_email'),
-# path('get-all-users', AllUsersView.as_view(), name='verify_email'),
