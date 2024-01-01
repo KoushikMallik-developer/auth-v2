@@ -3,42 +3,54 @@ import logging
 from psycopg2 import DatabaseError
 from drf_yasg import openapi
 from drf_yasg.openapi import Schema
-from drf_yasg.utils import swagger_auto_schema
 from pydantic import ValidationError
-from rest_framework import serializers, status
+from rest_framework import status, serializers
 from rest_framework.renderers import JSONRenderer
+from rest_framework.request import Request
 from rest_framework.response import Response
 from rest_framework.views import APIView
-from rest_framework_simplejwt.exceptions import TokenError
 
 from api.auth_exceptions.user_exceptions import (
     EmailNotSentError,
-    UserAuthenticationFailedError,
     UserNotFoundError,
     UserNotVerifiedError,
+    UserAuthenticationFailedError,
 )
-from api.services.helpers import decode_jwt_token, validate_user_uid
-from api.services.user_services.user_services import UserServices
+from api.services.seller_services.seller_services import SellerServices
+from drf_yasg.utils import swagger_auto_schema
 
 
-class UserDetailView(APIView):
+class SellerSignInView(APIView):
     renderer_classes = [JSONRenderer]
 
     @swagger_auto_schema(
-        operation_summary="Get User Details",
-        operation_description="Get User Details",
+        operation_summary="Sign In User",
+        operation_description="Sign In User",
+        request_body=Schema(
+            title="Sign-In Request",
+            type=openapi.TYPE_OBJECT,
+            properties={
+                "email": Schema(
+                    name="email",
+                    in_=openapi.IN_BODY,
+                    type=openapi.TYPE_STRING,
+                    format=openapi.FORMAT_EMAIL,
+                ),
+                "password": Schema(
+                    name="password",
+                    in_=openapi.IN_BODY,
+                    type=openapi.TYPE_STRING,
+                    format=openapi.FORMAT_PASSWORD,
+                ),
+            },
+        ),
         responses={
             200: Schema(
-                title="Get-User-Details Response",
+                title="Sign-In Response",
                 type=openapi.TYPE_OBJECT,
                 properties={
-                    "successMessage": Schema(
-                        name="successMessage",
-                        in_=openapi.IN_BODY,
-                        type=openapi.TYPE_STRING,
-                    ),
-                    "data": Schema(
-                        name="successMessage",
+                    "token": Schema(
+                        name="token",
                         in_=openapi.IN_BODY,
                         type=openapi.TYPE_OBJECT,
                     ),
@@ -50,7 +62,7 @@ class UserDetailView(APIView):
                 },
             ),
             "default": Schema(
-                title="Get-User-Details Response",
+                title="Sign-In Response",
                 type=openapi.TYPE_OBJECT,
                 properties={
                     "successMessage": Schema(
@@ -67,35 +79,28 @@ class UserDetailView(APIView):
             ),
         },
     )
-    def get(self, request):
+    def post(self, request: Request):
         try:
-            user_id = decode_jwt_token(request=request)
-            if validate_user_uid(uid=user_id).is_validated:
-                user_details = UserServices().get_user_details(uid=user_id)
-                if user_details.get_is_regular:
+            request_data = request.data
+            email = request_data.get("email")
+            password = request_data.get("password")
+
+            if email and password:
+                result = SellerServices.sign_in_user(
+                    data={
+                        "email": email,
+                        "password": password,
+                    }
+                )
+                if result.get("token"):
                     return Response(
-                        data={
-                            "successMessage": "User details updated Successfully.",
-                            "data": user_details.model_dump(),
-                            "errorMessage": None,
-                        },
+                        data={"token": result.get("token"), "errorMessage": None},
                         status=status.HTTP_200_OK,
                         content_type="application/json",
                     )
-                else:
-                    raise UserNotFoundError()
             else:
-                raise TokenError()
-        except TokenError as e:
-            logging.error(f"TokenError: {str(e)}")
-            return Response(
-                data={
-                    "successMessage": None,
-                    "errorMessage": f"TokenError: {str(e)}",
-                },
-                status=status.HTTP_401_UNAUTHORIZED,
-                content_type="application/json",
-            )
+                raise ValueError("Email or Password is not in correct format")
+
         except DatabaseError as e:
             logging.error(
                 f"DatabaseError: Error Occured While fetching user details: {e}"

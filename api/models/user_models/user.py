@@ -17,13 +17,13 @@ class ECOMUser(AbstractUser):
         super().save(*args, **kwargs)
 
     @staticmethod
-    def authenticate(email, password) -> dict:
+    def authenticate_user(email, password) -> dict:
         user_exists = (
             True if ECOMUser.objects.filter(email=email).count() > 0 else False
         )
         if user_exists:
             user = ECOMUser.objects.get(email=email)
-            if user:
+            if user and user.get_is_regular:
                 if user.is_active:
                     if EncryptionServices().decrypt(user.password) == password:
                         token = TokenGenerator().get_tokens_for_user(
@@ -37,5 +37,33 @@ class ECOMUser(AbstractUser):
                         raise UserAuthenticationFailedError()
                 else:
                     raise UserNotVerifiedError()
+            else:
+                raise UserNotFoundError()
+        else:
+            raise UserNotFoundError()
+
+    @staticmethod
+    def authenticate_seller(email, password) -> dict:
+        user_exists = (
+            True if ECOMUser.objects.filter(email=email).count() > 0 else False
+        )
+        if user_exists:
+            user = ECOMUser.objects.get(email=email)
+            if user and user.get_is_seller:
+                if user.is_active:
+                    if EncryptionServices().decrypt(user.password) == password:
+                        token = TokenGenerator().get_tokens_for_user(
+                            ExportECOMUser(**user.model_to_dict())
+                        )
+                        return {
+                            "token": token,
+                            "errorMessage": None,
+                        }
+                    else:
+                        raise UserAuthenticationFailedError()
+                else:
+                    raise UserNotVerifiedError()
+            else:
+                raise UserNotFoundError()
         else:
             raise UserNotFoundError()

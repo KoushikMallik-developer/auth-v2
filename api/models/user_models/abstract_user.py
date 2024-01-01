@@ -24,21 +24,21 @@ class AbstractUser(BaseUser):
 
     @property
     def get_is_admin(self):
-        if self.account_type == "admin":
+        if self.account_type == "Admin":
             return True
         else:
             return False
 
     @property
     def get_is_seller(self):
-        if self.account_type == "seller":
+        if self.account_type == "Seller":
             return True
         else:
             return False
 
     @property
     def get_is_regular(self):
-        if self.account_type == "regular":
+        if self.account_type == "Regular":
             return True
         else:
             return False

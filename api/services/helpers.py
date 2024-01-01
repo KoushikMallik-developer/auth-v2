@@ -169,3 +169,13 @@ def validate_pin(pincode: str) -> ValidationResult:
         return ValidationResult(
             is_validated=False, error="Invalid PIN code. It should be a 6-digit number."
         )
+
+
+def validate_gstin(gstin: str) -> ValidationResult:
+    if gstin.isalnum() and len(gstin) == 15:
+        return ValidationResult(is_validated=True, error=None)
+    else:
+        return ValidationResult(
+            is_validated=False,
+            error="Invalid GSTIN Number. It should be a 15 digit number.",
+        )

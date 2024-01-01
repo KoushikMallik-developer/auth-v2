@@ -64,7 +64,7 @@ class UserServices:
         email = data.get("email")
         password = data.get("password")
         if email and password:
-            response = ECOMUser.authenticate(email=email, password=password)
+            response = ECOMUser.authenticate_user(email=email, password=password)
             return response
 
     def reset_password(self, email: str) -> dict:
@@ -112,6 +112,8 @@ class UserServices:
         uid: str, fname: str, lname: str, dob: str, phone: str, image: str
     ):
         user = ECOMUser.objects.get(id=uid)
+        if not user.get_is_regular:
+            raise UserNotFoundError()
         if image and image != "" and image != user.image:
             user.image = image
         if fname and fname != "" and fname != user.fname:
@@ -214,6 +216,8 @@ class UserServices:
         delivery_to_person_name: str,
     ):
         user = ECOMUser.objects.get(id=uid)
+        if not user.get_is_regular:
+            raise UserNotFoundError()
         address = DeliveryAddress()
         address.user = user
         if address_line1 and address_line1 != "" and isinstance(address_line1, str):
