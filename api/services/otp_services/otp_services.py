@@ -4,10 +4,10 @@ from typing import Optional
 from django.core.cache import cache
 from django.utils import timezone
 
-from api.models.email_verification import ECOMEmailVerification
-from api.models.export_models.export_user import ExportECOMUser
-from api.models.user import ECOMUser
-from api.services.email_services import EmailServices
+from api.models.user_models.email_verification import ECOMEmailVerification
+from api.models.export_types.export_user import ExportECOMUser
+from api.models.user_models.user import ECOMUser
+from api.services.email_services.email_services import EmailServices
 from api.services.otp_services.otp_generator import OTPGenerator
 
 
