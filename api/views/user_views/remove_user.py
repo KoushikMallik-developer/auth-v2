@@ -16,7 +16,7 @@ from api.auth_exceptions.user_exceptions import (
     UserAuthenticationFailedError,
     UserNotVerifiedError,
 )
-from api.models.user import ECOMUser
+from api.models.user_models.user import ECOMUser
 from api.services.helpers import validate_user_email
 
 

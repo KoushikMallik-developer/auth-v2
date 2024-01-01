@@ -4,16 +4,16 @@ from dotenv import load_dotenv
 from psycopg2 import DatabaseError
 
 from api.auth_exceptions.user_exceptions import EmailNotSentError, UserNotFoundError
-from api.models.delivery_address import DeliveryAddress
-from api.models.export_models.export_user import ExportECOMUser, ExportECOMUserList
-from api.models.user import ECOMUser
+from api.models.user_models.delivery_address import DeliveryAddress
+from api.models.export_types.export_user import ExportECOMUser, ExportECOMUserList
+from api.models.user_models.user import ECOMUser
 from api.serializers.ecom_user_serializer import ECOMUserSerializer
 from api.services.definitions import (
     DEFAULT_VERIFICATION_MESSAGE,
     TRUTH_LIST,
 )
 from api.services.email_services import EmailServices
-from api.services.encryption_service import EncryptionServices
+from api.services.encryption_services.encryption_service import EncryptionServices
 from api.services.helpers import (
     validate_user_email,
     validate_password,
@@ -24,7 +24,7 @@ from api.services.helpers import (
     validate_pin,
 )
 from api.services.otp_services.otp_services import OTPServices
-from api.services.token_generator import TokenGenerator
+from api.services.token_services.token_generator import TokenGenerator
 
 
 class UserServices:

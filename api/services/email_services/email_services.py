@@ -1,6 +1,6 @@
 from django.core.mail import EmailMessage
-from api.models.email_types.ecom_email import ECOMEmailMessage
-from api.models.export_models.export_user import ExportECOMUser
+from api.models.export_types.email_types.ecom_email import ECOMEmailMessage
+from api.models.export_types.export_user import ExportECOMUser
 
 
 class EmailServices:

@@ -1,6 +1,6 @@
 from django.db import models
 
-from api.models.base_model import ECOMBaseModel
+from api.models.base_models.base_model import ECOMBaseModel
 
 
 class ECOMBaseAddress(ECOMBaseModel):

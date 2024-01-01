@@ -16,7 +16,7 @@ from api.auth_exceptions.user_exceptions import (
     UserAlreadyVerifiedError,
     EmailNotSentError,
 )
-from api.models.user import ECOMUser
+from api.models.user_models.user import ECOMUser
 from api.services.definitions import DEFAULT_VERIFICATION_MESSAGE
 
 from api.services.helpers import validate_email_format

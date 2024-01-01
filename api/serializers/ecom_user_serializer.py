@@ -1,10 +1,10 @@
 from typing import Optional
 from rest_framework import serializers
 
-from api.models.export_models.export_user import ExportECOMUser
-from api.models.user import ECOMUser
-from api.models.validation_result import ValidationResult
-from api.services.encryption_service import EncryptionServices
+from api.models.export_types.export_user import ExportECOMUser
+from api.models.user_models.user import ECOMUser
+from api.models.export_types.validation_types.validation_result import ValidationResult
+from api.services.encryption_services.encryption_service import EncryptionServices
 from api.services.helpers import (
     validate_email,
     validate_name,

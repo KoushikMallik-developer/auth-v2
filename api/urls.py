@@ -1,18 +1,18 @@
 from django.urls import path
 
-from api.views.add_delivery_address import AddDeliveryAddress
+from api.views.user_views.add_delivery_address import AddDeliveryAddress
 from api.views.all_users import AllUsersView
 from api.views.clear_server_cache import ClearServerCaches
-from api.views.create_user import CreateUsersView
-from api.views.otp_view import SendOTPView
-from api.views.password_reset import PasswordResetView
-from api.views.remove_user import RemoveUserView
-from api.views.sign_in import SignInView
-from api.views.update_delivery_address import UpdateDeliveryAddress
-from api.views.update_password import UpdatePasswordView
-from api.views.update_profile import UpdateProfileView
-from api.views.user_details import UserDetailView
-from api.views.validate_otp_view import ValidateOTPView
+from api.views.user_views.create_user import CreateUsersView
+from api.views.user_views.otp_view import SendOTPView
+from api.views.user_views.password_reset import PasswordResetView
+from api.views.user_views.remove_user import RemoveUserView
+from api.views.user_views.sign_in import SignInView
+from api.views.user_views.update_delivery_address import UpdateDeliveryAddress
+from api.views.user_views.update_password import UpdatePasswordView
+from api.views.user_views.update_profile import UpdateProfileView
+from api.views.user_views.user_details import UserDetailView
+from api.views.user_views.validate_otp_view import ValidateOTPView
 
 urlpatterns = [
     path("all-users", AllUsersView.as_view(), name="All-Users"),

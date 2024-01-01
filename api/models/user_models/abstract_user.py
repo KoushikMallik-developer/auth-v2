@@ -1,6 +1,6 @@
 from django.db import models
 
-from api.models.base_user import BaseUser
+from api.models.base_models.base_user import BaseUser
 
 
 class AbstractUser(BaseUser):

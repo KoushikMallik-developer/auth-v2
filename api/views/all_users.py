@@ -12,7 +12,7 @@ from drf_yasg.openapi import Schema
 from drf_yasg.utils import swagger_auto_schema
 
 
-from api.models.export_models.export_user import ExportECOMUserList
+from api.models.export_types.export_user import ExportECOMUserList
 from api.services.user_services import UserServices
 
 

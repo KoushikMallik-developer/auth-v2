@@ -1,7 +1,7 @@
 from django.core.cache import cache
 from rest_framework_simplejwt.tokens import RefreshToken
 
-from api.models.export_models.export_user import ExportECOMUser
+from api.models.export_types.export_user import ExportECOMUser
 
 
 class TokenGenerator:

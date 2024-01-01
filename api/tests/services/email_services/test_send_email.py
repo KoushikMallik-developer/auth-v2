@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import pytest
 
-from api.models.export_models.export_user import ExportECOMUser
+from api.models.export_types.export_user import ExportECOMUser
 from api.services.email_services import EmailServices
 from api.services.otp_services.otp_generator import OTPGenerator
 

@@ -17,11 +17,11 @@ from api.auth_exceptions.user_exceptions import (
     OTPNotVerifiedError,
     EmailNotSentError,
 )
-from api.models.export_models.export_user import ExportECOMUser
-from api.models.user import ECOMUser
+from api.models.export_types.export_user import ExportECOMUser
+from api.models.user_models.user import ECOMUser
 from api.services.helpers import validate_email_format
 from api.services.otp_services.otp_services import OTPServices
-from api.services.token_generator import TokenGenerator
+from api.services.token_services.token_generator import TokenGenerator
 
 
 class ValidateOTPView(APIView):

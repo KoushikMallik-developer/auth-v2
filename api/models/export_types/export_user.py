@@ -5,7 +5,7 @@ from uuid import UUID
 
 from pydantic import BaseModel
 
-from api.models.export_models.export_delivery_address import (
+from api.models.export_types.export_delivery_address import (
     ExportDeliveryAddressList,
     ExportDeliveryAddress,
 )
@@ -27,7 +27,7 @@ class ExportECOMUser(BaseModel):
     updated_at: datetime.datetime
 
     def __init__(self, with_id: bool = True, with_address: bool = False, **kwargs):
-        from api.models.delivery_address import DeliveryAddress
+        from api.models.user_models.delivery_address import DeliveryAddress
 
         if with_address:
             address_list = DeliveryAddress.objects.filter(user__id=kwargs.get("id"))

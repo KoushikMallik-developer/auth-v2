@@ -1,8 +1,8 @@
 from django.db import models
 from django.utils import timezone
 
-from api.models.base_model import ECOMBaseModel
-from api.models.user import ECOMUser
+from api.models.base_models.base_model import ECOMBaseModel
+from api.models.user_models.user import ECOMUser
 
 
 class ECOMEmailVerification(ECOMBaseModel):

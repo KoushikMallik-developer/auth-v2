@@ -1,8 +1,8 @@
 from django.db import models
 
-from api.models.base_address import ECOMBaseAddress
+from api.models.base_models.base_address import ECOMBaseAddress
 from api.models.definitions import ADDRESS_TYPE_CHOICES
-from api.models.user import ECOMUser
+from api.models.user_models.user import ECOMUser
 
 
 class DeliveryAddress(ECOMBaseAddress):

@@ -3,10 +3,10 @@ from api.auth_exceptions.user_exceptions import (
     UserNotVerifiedError,
     UserAuthenticationFailedError,
 )
-from api.models.abstract_user import AbstractUser
-from api.models.export_models.export_user import ExportECOMUser
-from api.services.encryption_service import EncryptionServices
-from api.services.token_generator import TokenGenerator
+from api.models.user_models.abstract_user import AbstractUser
+from api.models.export_types.export_user import ExportECOMUser
+from api.services.encryption_services.encryption_service import EncryptionServices
+from api.services.token_services.token_generator import TokenGenerator
 
 
 class ECOMUser(AbstractUser):
