@@ -18,11 +18,11 @@ from api.auth_exceptions.user_exceptions import (
     UserNotVerifiedError,
 )
 from api.services.helpers import decode_jwt_token, validate_user_uid
-from api.services.user_services.user_services import UserServices
-from api.views.helpers import is_regular_account
+from api.services.seller_services.seller_services import SellerServices
+from api.views.helpers import is_seller_account
 
 
-class UserDetailView(APIView):
+class SellerDetailView(APIView):
     renderer_classes = [JSONRenderer]
 
     @swagger_auto_schema(
@@ -72,12 +72,12 @@ class UserDetailView(APIView):
         try:
             user_id = decode_jwt_token(request=request)
             if validate_user_uid(uid=user_id).is_validated:
-                if is_regular_account(uid=user_id):
-                    user_details = UserServices().get_user_details(uid=user_id)
+                if is_seller_account(uid=user_id):
+                    seller_details = SellerServices().get_seller_details(uid=user_id)
                     return Response(
                         data={
-                            "successMessage": "User details fetched successfully.",
-                            "data": user_details.model_dump(),
+                            "successMessage": "Seller details fetched Successfully.",
+                            "data": seller_details.model_dump(),
                             "errorMessage": None,
                         },
                         status=status.HTTP_200_OK,
@@ -184,13 +184,13 @@ class UserDetailView(APIView):
                 status=status.HTTP_500_INTERNAL_SERVER_ERROR,
                 content_type="application/json",
             )
-        except Exception as e:
-            logging.warning(f"InternalServerError: {e}")
-            return Response(
-                data={
-                    "successMessage": None,
-                    "errorMessage": f"InternalServerError: {e}",
-                },
-                status=status.HTTP_400_BAD_REQUEST,
-                content_type="application/json",
-            )
+        # except Exception as e:
+        #     logging.warning(f"InternalServerError: {e}")
+        #     return Response(
+        #         data={
+        #             "successMessage": None,
+        #             "errorMessage": f"InternalServerError: {e}",
+        #         },
+        #         status=status.HTTP_400_BAD_REQUEST,
+        #         content_type="application/json",
+        #     )

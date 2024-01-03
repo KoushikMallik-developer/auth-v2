@@ -29,17 +29,18 @@ class ExportECOMUser(BaseModel):
     def __init__(self, with_id: bool = True, with_address: bool = False, **kwargs):
         from api.models.user_models.delivery_address import DeliveryAddress
 
-        if with_address:
-            address_list = DeliveryAddress.objects.filter(user__id=kwargs.get("id"))
-            address_list = ExportDeliveryAddressList(
-                address_list=[
-                    ExportDeliveryAddress(**address.model_to_dict())
-                    for address in address_list
-                ]
-            )
-            kwargs["delivery_address_list"] = address_list
-        if not with_id:
-            kwargs["id"] = None
+        if kwargs.get("id"):
+            if with_address:
+                address_list = DeliveryAddress.objects.filter(user__id=kwargs.get("id"))
+                address_list = ExportDeliveryAddressList(
+                    address_list=[
+                        ExportDeliveryAddress(**address.model_to_dict())
+                        for address in address_list
+                    ]
+                )
+                kwargs["delivery_address_list"] = address_list
+            if not with_id:
+                kwargs["id"] = None
         super().__init__(**kwargs)
 
 

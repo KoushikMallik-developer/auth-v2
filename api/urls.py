@@ -1,7 +1,9 @@
 from django.urls import path
 
 from api.views.seller_views.create_seller import CreateSellerView
+from api.views.seller_views.seller_details import SellerDetailView
 from api.views.seller_views.sign_in import SellerSignInView
+from api.views.seller_views.update_seller_details import UpdateSellerProfileView
 from api.views.user_views.add_delivery_address import AddDeliveryAddress
 from api.views.all_users import AllUsersView
 from api.views.clear_server_cache import ClearServerCaches
@@ -31,13 +33,19 @@ urlpatterns = [
         UpdateDeliveryAddress.as_view(),
         name="Add-Delivery-Address",
     ),
+    path("user-details", UserDetailView.as_view(), name="user-details"),
     # Seller Paths
     path("seller/create-users", CreateSellerView.as_view(), name="Seller-Create-Users"),
     path("seller/sign-in", SellerSignInView.as_view(), name="seller-sign-in"),
+    path(
+        "seller/update-profile",
+        UpdateSellerProfileView.as_view(),
+        name="seller-sign-in",
+    ),
+    path("seller/seller-details", SellerDetailView.as_view(), name="seller-details"),
     # General Paths
     path("all-users", AllUsersView.as_view(), name="All-Users"),
     path("remove-user", RemoveUserView.as_view(), name="Remove-User"),
-    path("user-details", UserDetailView.as_view(), name="user-details"),
     path("send-otp", SendOTPView.as_view(), name="send-otp"),
     path("verify-otp", ValidateOTPView.as_view(), name="verify-otp"),
     path(

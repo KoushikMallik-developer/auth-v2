@@ -17,31 +17,55 @@ from api.auth_exceptions.user_exceptions import (
     UserNotFoundError,
     UserNotVerifiedError,
 )
+from api.models.request_data_types.update_seller_details import (
+    UpdateSellerDetailsRequestType,
+)
 from api.services.helpers import decode_jwt_token, validate_user_uid
-from api.services.user_services.user_services import UserServices
-from api.views.helpers import is_regular_account
+from api.services.seller_services.seller_services import SellerServices
 
 
-class UserDetailView(APIView):
+class UpdateSellerProfileView(APIView):
     renderer_classes = [JSONRenderer]
 
     @swagger_auto_schema(
-        operation_summary="Get User Details",
-        operation_description="Get User Details",
+        operation_summary="Update User Details",
+        operation_description="Update User Details",
+        request_body=Schema(
+            title="Update-Profile Request",
+            type=openapi.TYPE_OBJECT,
+            properties={
+                "fname": Schema(
+                    name="fname",
+                    in_=openapi.IN_BODY,
+                    type=openapi.TYPE_STRING,
+                ),
+                "lname": Schema(
+                    name="lname",
+                    in_=openapi.IN_BODY,
+                    type=openapi.TYPE_STRING,
+                ),
+                "phone": Schema(
+                    name="phone",
+                    in_=openapi.IN_BODY,
+                    type=openapi.TYPE_STRING,
+                ),
+                "dob": Schema(
+                    name="dob",
+                    in_=openapi.IN_BODY,
+                    type=openapi.TYPE_STRING,
+                    format=openapi.FORMAT_DATE,
+                ),
+            },
+        ),
         responses={
             200: Schema(
-                title="Get-User-Details Response",
+                title="Update-Profile Response",
                 type=openapi.TYPE_OBJECT,
                 properties={
                     "successMessage": Schema(
                         name="successMessage",
                         in_=openapi.IN_BODY,
                         type=openapi.TYPE_STRING,
-                    ),
-                    "data": Schema(
-                        name="successMessage",
-                        in_=openapi.IN_BODY,
-                        type=openapi.TYPE_OBJECT,
                     ),
                     "errorMessage": Schema(
                         name="errorMessage",
@@ -51,7 +75,7 @@ class UserDetailView(APIView):
                 },
             ),
             "default": Schema(
-                title="Get-User-Details Response",
+                title="Update-Profile Response",
                 type=openapi.TYPE_OBJECT,
                 properties={
                     "successMessage": Schema(
@@ -68,23 +92,23 @@ class UserDetailView(APIView):
             ),
         },
     )
-    def get(self, request):
+    def post(self, request):
         try:
             user_id = decode_jwt_token(request=request)
             if validate_user_uid(uid=user_id).is_validated:
-                if is_regular_account(uid=user_id):
-                    user_details = UserServices().get_user_details(uid=user_id)
-                    return Response(
-                        data={
-                            "successMessage": "User details fetched successfully.",
-                            "data": user_details.model_dump(),
-                            "errorMessage": None,
-                        },
-                        status=status.HTTP_200_OK,
-                        content_type="application/json",
-                    )
-                else:
-                    raise UserNotFoundError()
+                request_data = UpdateSellerDetailsRequestType(**request.data)
+                SellerServices().update_seller_details(
+                    uid=user_id,
+                    request_data=request_data,
+                )
+                return Response(
+                    data={
+                        "successMessage": "Seller details updated Successfully.",
+                        "errorMessage": None,
+                    },
+                    status=status.HTTP_200_OK,
+                    content_type="application/json",
+                )
             else:
                 raise TokenError()
         except TokenError as e:
