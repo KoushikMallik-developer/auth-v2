@@ -99,7 +99,7 @@ def validate_username(username: str) -> ValidationResult:
 
 def validate_password(password1: str, password2: str) -> ValidationResult:
     if password1 == password2:
-        if len(password1) > 6:
+        if len(password1) >= 6:
             return ValidationResult(is_validated=True, error=None)
         return ValidationResult(
             is_validated=False, error="Password must be minimum of 6 characters"

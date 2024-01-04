@@ -33,6 +33,7 @@ INSTALLED_APPS = [
     "drf_yasg",
     "corsheaders",
     "storages",
+    "import_export",
 ]
 
 MIDDLEWARE = [

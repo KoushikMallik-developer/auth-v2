@@ -17,3 +17,7 @@ class EnvironmentSettings(Enum):
 TRUTH_LIST = [True, "True", "T", "true", "Y", "y", 1, "1", "Yes", "yes"]
 
 ACCOUNT_TYPE_CHOICES = ["Regular", "Seller", "Admin"]
+
+SELLER_ACCOUNT_TYPE_IDENTIFIER = "Seller"
+USER_ACCOUNT_TYPE_IDENTIFIER = "Regular"
+ADMIN_ACCOUNT_TYPE_IDENTIFIER = "Admin"

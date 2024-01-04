@@ -17,6 +17,9 @@ from api.auth_exceptions.user_exceptions import (
     UserNotFoundError,
     UserNotVerifiedError,
 )
+from api.models.request_data_types.add_delivery_address import (
+    AddDeliveryAddressRequestType,
+)
 from api.services.helpers import decode_jwt_token, validate_user_uid
 from api.services.user_services.user_services import UserServices
 
@@ -25,38 +28,77 @@ class UpdateDeliveryAddress(APIView):
     renderer_classes = [JSONRenderer]
 
     @swagger_auto_schema(
-        operation_summary="Update User Details",
-        operation_description="Update User Details",
+        operation_summary="Update-Delivery-Address",
+        operation_description="Update-Delivery-Address",
         request_body=Schema(
-            title="Update-Profile Request",
+            title="Update-Delivery-Address Request",
             type=openapi.TYPE_OBJECT,
             properties={
-                "fname": Schema(
-                    name="fname",
+                "address_uid": Schema(
+                    name="address_uid",
                     in_=openapi.IN_BODY,
                     type=openapi.TYPE_STRING,
                 ),
-                "lname": Schema(
-                    name="lname",
+                "address_line1": Schema(
+                    name="address_line1",
                     in_=openapi.IN_BODY,
                     type=openapi.TYPE_STRING,
                 ),
-                "phone": Schema(
-                    name="phone",
+                "address_line2": Schema(
+                    name="address_line2",
                     in_=openapi.IN_BODY,
                     type=openapi.TYPE_STRING,
                 ),
-                "dob": Schema(
-                    name="dob",
+                "city": Schema(
+                    name="city",
                     in_=openapi.IN_BODY,
                     type=openapi.TYPE_STRING,
-                    format=openapi.FORMAT_DATE,
+                ),
+                "state": Schema(
+                    name="state",
+                    in_=openapi.IN_BODY,
+                    type=openapi.TYPE_STRING,
+                ),
+                "country": Schema(
+                    name="country",
+                    in_=openapi.IN_BODY,
+                    type=openapi.TYPE_STRING,
+                ),
+                "pin": Schema(
+                    name="pin",
+                    in_=openapi.IN_BODY,
+                    type=openapi.TYPE_STRING,
+                ),
+                "landmark": Schema(
+                    name="landmark",
+                    in_=openapi.IN_BODY,
+                    type=openapi.TYPE_STRING,
+                ),
+                "address_type": Schema(
+                    name="address_type",
+                    in_=openapi.IN_BODY,
+                    type=openapi.TYPE_STRING,
+                ),
+                "is_default": Schema(
+                    name="is_default",
+                    in_=openapi.IN_BODY,
+                    type=openapi.TYPE_STRING,
+                ),
+                "delivery_to_phone": Schema(
+                    name="delivery_to_phone",
+                    in_=openapi.IN_BODY,
+                    type=openapi.TYPE_STRING,
+                ),
+                "delivery_to_person_name": Schema(
+                    name="delivery_to_person_name",
+                    in_=openapi.IN_BODY,
+                    type=openapi.TYPE_STRING,
                 ),
             },
         ),
         responses={
-            200: Schema(
-                title="Update-Profile Response",
+            201: Schema(
+                title="Add-Delivery-Address Response",
                 type=openapi.TYPE_OBJECT,
                 properties={
                     "successMessage": Schema(
@@ -72,7 +114,7 @@ class UpdateDeliveryAddress(APIView):
                 },
             ),
             "default": Schema(
-                title="Update-Profile Response",
+                title="Add-Delivery-Address Response",
                 type=openapi.TYPE_OBJECT,
                 properties={
                     "successMessage": Schema(
@@ -96,17 +138,7 @@ class UpdateDeliveryAddress(APIView):
                 UserServices().update_delivery_address(
                     uid=user_id,
                     address_uid=request.data.get("address_uid"),
-                    address_line1=request.data.get("address_line1"),
-                    address_line2=request.data.get("address_line2"),
-                    state=request.data.get("state"),
-                    city=request.data.get("city"),
-                    country=request.data.get("country"),
-                    pin=request.data.get("pin"),
-                    landmark=request.data.get("landmark"),
-                    address_type=request.data.get("address_type"),
-                    is_default=request.data.get("is_default"),
-                    delivery_to_phone=request.data.get("delivery_to_phone"),
-                    delivery_to_person_name=request.data.get("delivery_to_person_name"),
+                    request_data=AddDeliveryAddressRequestType(**request.data),
                 )
                 return Response(
                     data={
