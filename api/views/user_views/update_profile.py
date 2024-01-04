@@ -17,6 +17,9 @@ from api.auth_exceptions.user_exceptions import (
     UserNotFoundError,
     UserNotVerifiedError,
 )
+from api.models.request_data_types.update_user_profile import (
+    UpdateUserProfileRequestType,
+)
 from api.services.helpers import decode_jwt_token, validate_user_uid
 from api.services.user_services.user_services import UserServices
 
@@ -95,11 +98,7 @@ class UpdateProfileView(APIView):
             if validate_user_uid(uid=user_id).is_validated:
                 UserServices().update_user_profile(
                     uid=user_id,
-                    fname=request.data.get("fname"),
-                    lname=request.data.get("lname"),
-                    dob=request.data.get("dob"),
-                    phone=request.data.get("phone"),
-                    image=request.data.get("image"),
+                    request_data=UpdateUserProfileRequestType(**request.data),
                 )
                 return Response(
                     data={

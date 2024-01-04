@@ -14,6 +14,7 @@ from drf_yasg.openapi import Schema
 from drf_yasg.utils import swagger_auto_schema
 
 from api.auth_exceptions.user_exceptions import EmailNotSentError
+from api.models.request_data_types.create_user import CreateUserRequestType
 from api.services.user_services.user_services import UserServices
 
 
@@ -99,36 +100,18 @@ class CreateUsersView(APIView):
     )
     def post(self, request: Request):
         try:
-            request_data = request.data
-            username = request_data.get("username")
-            email = request_data.get("email")
-            fname = request_data.get("fname")
-            lname = request_data.get("lname")
-            password1 = request_data.get("password1")
-            password2 = request_data.get("password2")
-            if username and email and fname and lname and password1 and password2:
-                result = UserServices.create_new_user_service(
+            result = UserServices.create_new_user_service(
+                request_data=CreateUserRequestType(**request.data)
+            )
+            if result.get("successMessage"):
+                return Response(
                     data={
-                        "username": username,
-                        "email": email,
-                        "fname": fname,
-                        "lname": lname,
-                        "password1": password1,
-                        "password2": password2,
-                    }
+                        "successMessage": result.get("successMessage"),
+                        "errorMessage": None,
+                    },
+                    status=status.HTTP_201_CREATED,
+                    content_type="application/json",
                 )
-                if result.get("successMessage"):
-                    return Response(
-                        data={
-                            "successMessage": result.get("successMessage"),
-                            "errorMessage": None,
-                        },
-                        status=status.HTTP_201_CREATED,
-                        content_type="application/json",
-                    )
-            else:
-                raise ValueError("Input data are not in correct format.")
-
         except DatabaseError as e:
             logging.error(
                 f"DatabaseError: Error Occured While saving users details: {e}"

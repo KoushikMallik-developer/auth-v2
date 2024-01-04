@@ -16,6 +16,7 @@ from api.auth_exceptions.user_exceptions import (
     UserNotVerifiedError,
     UserAuthenticationFailedError,
 )
+from api.models.request_data_types.sign_in import SignInRequestType
 from api.services.seller_services.seller_services import SellerServices
 from drf_yasg.utils import swagger_auto_schema
 
@@ -87,10 +88,7 @@ class SellerSignInView(APIView):
 
             if email and password:
                 result = SellerServices.sign_in_user(
-                    data={
-                        "email": email,
-                        "password": password,
-                    }
+                    request_data=SignInRequestType(**request.data)
                 )
                 if result.get("token"):
                     return Response(

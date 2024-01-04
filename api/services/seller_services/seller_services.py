@@ -1,6 +1,8 @@
 from api.auth_exceptions.user_exceptions import EmailNotSentError, UserNotFoundError
 from api.models.export_types.export_seller import ExportECOMSeller
 from api.models.export_types.export_user import ExportECOMUser
+from api.models.request_data_types.create_seller import CreateSellerRequestType
+from api.models.request_data_types.sign_in import SignInRequestType
 from api.models.request_data_types.update_seller_details import (
     UpdateSellerDetailsRequestType,
 )
@@ -23,8 +25,8 @@ from api.services.otp_services.otp_services import OTPServices
 
 class SellerServices:
     @staticmethod
-    def create_new_user_service(data: dict) -> dict:
-        user: ExportECOMUser = ECOMUserSerializer().create(data=data)
+    def create_new_seller(request_data: CreateSellerRequestType) -> dict:
+        user = ECOMUserSerializer().create(data=request_data.model_dump())
         if user:
             response = OTPServices().send_otp_to_user(user.email)
             if response == "OK":
@@ -36,12 +38,9 @@ class SellerServices:
                 raise EmailNotSentError()
 
     @staticmethod
-    def sign_in_user(data: dict) -> dict:
-        email = data.get("email")
-        password = data.get("password")
-        if email and password:
-            response = ECOMUser.authenticate_seller(email=email, password=password)
-            return response
+    def sign_in_user(request_data: SignInRequestType) -> dict:
+        response = ECOMUser.authenticate_seller(request_data=request_data)
+        return response
 
     @staticmethod
     def update_user_profile(

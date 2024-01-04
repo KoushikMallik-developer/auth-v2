@@ -184,13 +184,13 @@ class SellerDetailView(APIView):
                 status=status.HTTP_500_INTERNAL_SERVER_ERROR,
                 content_type="application/json",
             )
-        # except Exception as e:
-        #     logging.warning(f"InternalServerError: {e}")
-        #     return Response(
-        #         data={
-        #             "successMessage": None,
-        #             "errorMessage": f"InternalServerError: {e}",
-        #         },
-        #         status=status.HTTP_400_BAD_REQUEST,
-        #         content_type="application/json",
-        #     )
+        except Exception as e:
+            logging.warning(f"InternalServerError: {e}")
+            return Response(
+                data={
+                    "successMessage": None,
+                    "errorMessage": f"InternalServerError: {e}",
+                },
+                status=status.HTTP_400_BAD_REQUEST,
+                content_type="application/json",
+            )

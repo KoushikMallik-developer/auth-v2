@@ -17,6 +17,9 @@ from api.auth_exceptions.user_exceptions import (
     UserNotFoundError,
     UserNotVerifiedError,
 )
+from api.models.request_data_types.add_delivery_address import (
+    AddDeliveryAddressRequestType,
+)
 from api.services.helpers import decode_jwt_token, validate_user_uid
 from api.services.user_services.user_services import UserServices
 
@@ -96,17 +99,7 @@ class UpdateDeliveryAddress(APIView):
                 UserServices().update_delivery_address(
                     uid=user_id,
                     address_uid=request.data.get("address_uid"),
-                    address_line1=request.data.get("address_line1"),
-                    address_line2=request.data.get("address_line2"),
-                    state=request.data.get("state"),
-                    city=request.data.get("city"),
-                    country=request.data.get("country"),
-                    pin=request.data.get("pin"),
-                    landmark=request.data.get("landmark"),
-                    address_type=request.data.get("address_type"),
-                    is_default=request.data.get("is_default"),
-                    delivery_to_phone=request.data.get("delivery_to_phone"),
-                    delivery_to_person_name=request.data.get("delivery_to_person_name"),
+                    request_data=AddDeliveryAddressRequestType(**request.data),
                 )
                 return Response(
                     data={
