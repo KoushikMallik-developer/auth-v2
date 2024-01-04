@@ -17,6 +17,7 @@ from api.auth_exceptions.user_exceptions import (
     UserNotFoundError,
     UserNotVerifiedError,
 )
+from api.models.request_data_types.change_password import ChangePasswordRequestType
 from api.services.helpers import validate_user_uid, decode_jwt_token
 from api.services.user_services.user_services import UserServices
 
@@ -85,9 +86,7 @@ class UpdatePasswordView(APIView):
             user_id = decode_jwt_token(request=request)
             if validate_user_uid(uid=user_id).is_validated:
                 UserServices().change_password(
-                    uid=user_id,
-                    password1=request.data.get("password1"),
-                    password2=request.data.get("password2"),
+                    uid=user_id, request_data=ChangePasswordRequestType(**request.data)
                 )
                 return Response(
                     data={

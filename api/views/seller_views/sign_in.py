@@ -16,6 +16,7 @@ from api.auth_exceptions.user_exceptions import (
     UserNotVerifiedError,
     UserAuthenticationFailedError,
 )
+from api.models.request_data_types.sign_in import SignInRequestType
 from api.services.seller_services.seller_services import SellerServices
 from drf_yasg.utils import swagger_auto_schema
 
@@ -24,10 +25,10 @@ class SellerSignInView(APIView):
     renderer_classes = [JSONRenderer]
 
     @swagger_auto_schema(
-        operation_summary="Sign In User",
+        operation_summary="Seller Sign In User",
         operation_description="Sign In User",
         request_body=Schema(
-            title="Sign-In Request",
+            title="Seller-Sign-In Request",
             type=openapi.TYPE_OBJECT,
             properties={
                 "email": Schema(
@@ -46,7 +47,7 @@ class SellerSignInView(APIView):
         ),
         responses={
             200: Schema(
-                title="Sign-In Response",
+                title="Seller-Sign-In Response",
                 type=openapi.TYPE_OBJECT,
                 properties={
                     "token": Schema(
@@ -62,7 +63,7 @@ class SellerSignInView(APIView):
                 },
             ),
             "default": Schema(
-                title="Sign-In Response",
+                title="Seller-Sign-In Response",
                 type=openapi.TYPE_OBJECT,
                 properties={
                     "successMessage": Schema(
@@ -81,26 +82,15 @@ class SellerSignInView(APIView):
     )
     def post(self, request: Request):
         try:
-            request_data = request.data
-            email = request_data.get("email")
-            password = request_data.get("password")
-
-            if email and password:
-                result = SellerServices.sign_in_user(
-                    data={
-                        "email": email,
-                        "password": password,
-                    }
+            result = SellerServices.sign_in_user(
+                request_data=SignInRequestType(**request.data)
+            )
+            if result.get("token"):
+                return Response(
+                    data={"token": result.get("token"), "errorMessage": None},
+                    status=status.HTTP_200_OK,
+                    content_type="application/json",
                 )
-                if result.get("token"):
-                    return Response(
-                        data={"token": result.get("token"), "errorMessage": None},
-                        status=status.HTTP_200_OK,
-                        content_type="application/json",
-                    )
-            else:
-                raise ValueError("Email or Password is not in correct format")
-
         except DatabaseError as e:
             logging.error(
                 f"DatabaseError: Error Occured While fetching user details: {e}"

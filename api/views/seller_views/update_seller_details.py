@@ -3,57 +3,124 @@ import logging
 from psycopg2 import DatabaseError
 from drf_yasg import openapi
 from drf_yasg.openapi import Schema
+from drf_yasg.utils import swagger_auto_schema
 from pydantic import ValidationError
-from rest_framework import status, serializers
+from rest_framework import serializers, status
 from rest_framework.renderers import JSONRenderer
-from rest_framework.request import Request
 from rest_framework.response import Response
 from rest_framework.views import APIView
+from rest_framework_simplejwt.exceptions import TokenError
 
 from api.auth_exceptions.user_exceptions import (
     EmailNotSentError,
+    UserAuthenticationFailedError,
     UserNotFoundError,
     UserNotVerifiedError,
-    UserAuthenticationFailedError,
 )
-from api.models.request_data_types.sign_in import SignInRequestType
-from api.services.user_services.user_services import UserServices
-from drf_yasg.utils import swagger_auto_schema
+from api.models.request_data_types.update_seller_details import (
+    UpdateSellerDetailsRequestType,
+)
+from api.services.helpers import decode_jwt_token, validate_user_uid
+from api.services.seller_services.seller_services import SellerServices
 
 
-class SignInView(APIView):
+class UpdateSellerProfileView(APIView):
     renderer_classes = [JSONRenderer]
 
     @swagger_auto_schema(
-        operation_summary="Sign In User",
-        operation_description="Sign In User",
+        operation_summary="Update Seller Details",
+        operation_description="Update Seller Details",
         request_body=Schema(
-            title="Sign-In Request",
+            title="Update-Seller-Profile Request",
             type=openapi.TYPE_OBJECT,
             properties={
-                "email": Schema(
-                    name="email",
+                "fname": Schema(
+                    name="fname",
                     in_=openapi.IN_BODY,
                     type=openapi.TYPE_STRING,
-                    format=openapi.FORMAT_EMAIL,
                 ),
-                "password": Schema(
-                    name="password",
+                "lname": Schema(
+                    name="lname",
                     in_=openapi.IN_BODY,
                     type=openapi.TYPE_STRING,
-                    format=openapi.FORMAT_PASSWORD,
+                ),
+                "phone": Schema(
+                    name="phone",
+                    in_=openapi.IN_BODY,
+                    type=openapi.TYPE_STRING,
+                ),
+                "company_name": Schema(
+                    name="company_name",
+                    in_=openapi.IN_BODY,
+                    type=openapi.TYPE_STRING,
+                ),
+                "image": Schema(
+                    name="image",
+                    in_=openapi.IN_BODY,
+                    type=openapi.TYPE_STRING,
+                ),
+                "bio": Schema(
+                    name="bio",
+                    in_=openapi.IN_BODY,
+                    type=openapi.TYPE_STRING,
+                ),
+                "website": Schema(
+                    name="website",
+                    in_=openapi.IN_BODY,
+                    type=openapi.TYPE_STRING,
+                ),
+                "address_line1": Schema(
+                    name="address_line1",
+                    in_=openapi.IN_BODY,
+                    type=openapi.TYPE_STRING,
+                ),
+                "address_line2": Schema(
+                    name="address_line2",
+                    in_=openapi.IN_BODY,
+                    type=openapi.TYPE_STRING,
+                ),
+                "state": Schema(
+                    name="state",
+                    in_=openapi.IN_BODY,
+                    type=openapi.TYPE_STRING,
+                ),
+                "city": Schema(
+                    name="city",
+                    in_=openapi.IN_BODY,
+                    type=openapi.TYPE_STRING,
+                ),
+                "pin": Schema(
+                    name="pin",
+                    in_=openapi.IN_BODY,
+                    type=openapi.TYPE_STRING,
+                ),
+                "country": Schema(
+                    name="country",
+                    in_=openapi.IN_BODY,
+                    type=openapi.TYPE_STRING,
+                ),
+                "landmark": Schema(
+                    name="landmark",
+                    in_=openapi.IN_BODY,
+                    type=openapi.TYPE_STRING,
+                ),
+                "dob": Schema(
+                    name="dob",
+                    in_=openapi.IN_BODY,
+                    type=openapi.TYPE_STRING,
+                    format=openapi.FORMAT_DATE,
                 ),
             },
         ),
         responses={
             200: Schema(
-                title="Sign-In Response",
+                title="Update-Seller-Profile Response",
                 type=openapi.TYPE_OBJECT,
                 properties={
-                    "token": Schema(
-                        name="token",
+                    "successMessage": Schema(
+                        name="successMessage",
                         in_=openapi.IN_BODY,
-                        type=openapi.TYPE_OBJECT,
+                        type=openapi.TYPE_STRING,
                     ),
                     "errorMessage": Schema(
                         name="errorMessage",
@@ -63,7 +130,7 @@ class SignInView(APIView):
                 },
             ),
             "default": Schema(
-                title="Sign-In Response",
+                title="Update-Seller-Profile Response",
                 type=openapi.TYPE_OBJECT,
                 properties={
                     "successMessage": Schema(
@@ -80,25 +147,35 @@ class SignInView(APIView):
             ),
         },
     )
-    def post(self, request: Request):
+    def post(self, request):
         try:
-            request_data = request.data
-            email = request_data.get("email")
-            password = request_data.get("password")
-
-            if email and password:
-                result = UserServices.sign_in_user(
-                    request_data=SignInRequestType(**request_data)
+            user_id = decode_jwt_token(request=request)
+            if validate_user_uid(uid=user_id).is_validated:
+                request_data = UpdateSellerDetailsRequestType(**request.data)
+                SellerServices().update_seller_details(
+                    uid=user_id,
+                    request_data=request_data,
                 )
-                if result.get("token"):
-                    return Response(
-                        data={"token": result.get("token"), "errorMessage": None},
-                        status=status.HTTP_200_OK,
-                        content_type="application/json",
-                    )
+                return Response(
+                    data={
+                        "successMessage": "Seller details updated Successfully.",
+                        "errorMessage": None,
+                    },
+                    status=status.HTTP_200_OK,
+                    content_type="application/json",
+                )
             else:
-                raise ValueError("Email or Password is not in correct format")
-
+                raise TokenError()
+        except TokenError as e:
+            logging.error(f"TokenError: {str(e)}")
+            return Response(
+                data={
+                    "successMessage": None,
+                    "errorMessage": f"TokenError: {str(e)}",
+                },
+                status=status.HTTP_401_UNAUTHORIZED,
+                content_type="application/json",
+            )
         except DatabaseError as e:
             logging.error(
                 f"DatabaseError: Error Occured While fetching user details: {e}"

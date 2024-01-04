@@ -19,6 +19,7 @@ from api.auth_exceptions.user_exceptions import (
 )
 from api.services.helpers import decode_jwt_token, validate_user_uid
 from api.services.user_services.user_services import UserServices
+from api.views.helpers import is_regular_account
 
 
 class UserDetailView(APIView):
@@ -71,11 +72,11 @@ class UserDetailView(APIView):
         try:
             user_id = decode_jwt_token(request=request)
             if validate_user_uid(uid=user_id).is_validated:
-                user_details = UserServices().get_user_details(uid=user_id)
-                if user_details.get_is_regular:
+                if is_regular_account(uid=user_id):
+                    user_details = UserServices().get_user_details(uid=user_id)
                     return Response(
                         data={
-                            "successMessage": "User details updated Successfully.",
+                            "successMessage": "User details fetched successfully.",
                             "data": user_details.model_dump(),
                             "errorMessage": None,
                         },

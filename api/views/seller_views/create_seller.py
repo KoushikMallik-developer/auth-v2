@@ -14,6 +14,7 @@ from drf_yasg.openapi import Schema
 from drf_yasg.utils import swagger_auto_schema
 
 from api.auth_exceptions.user_exceptions import EmailNotSentError
+from api.models.request_data_types.create_seller import CreateSellerRequestType
 from api.services.seller_services.seller_services import SellerServices
 
 
@@ -22,12 +23,17 @@ class CreateSellerView(APIView):
     renderer_classes = [JSONRenderer]
 
     @swagger_auto_schema(
-        operation_summary="Sign Up User",
-        operation_description="Sign Up User",
+        operation_summary="Sign Up Seller",
+        operation_description="Sign Up Seller",
         request_body=Schema(
-            title="Sign-up Request",
+            title="Seller-Sign-up Request",
             type=openapi.TYPE_OBJECT,
             properties={
+                "gstin": Schema(
+                    name="gstin",
+                    in_=openapi.IN_BODY,
+                    type=openapi.TYPE_STRING,
+                ),
                 "email": Schema(
                     name="email",
                     in_=openapi.IN_BODY,
@@ -65,7 +71,7 @@ class CreateSellerView(APIView):
         ),
         responses={
             201: Schema(
-                title="Sign-up Response",
+                title="Seller-Sign-up Response",
                 type=openapi.TYPE_OBJECT,
                 properties={
                     "successMessage": Schema(
@@ -81,7 +87,7 @@ class CreateSellerView(APIView):
                 },
             ),
             "default": Schema(
-                title="Sign-up Response",
+                title="Seller-Sign-up Response",
                 type=openapi.TYPE_OBJECT,
                 properties={
                     "successMessage": Schema(
@@ -100,47 +106,18 @@ class CreateSellerView(APIView):
     )
     def post(self, request: Request):
         try:
-            request_data = request.data
-            username = request_data.get("username")
-            gstin = request_data.get("gstin")
-            email = request_data.get("email")
-            fname = request_data.get("fname")
-            lname = request_data.get("lname")
-            password1 = request_data.get("password1")
-            password2 = request_data.get("password2")
-            if (
-                username
-                and email
-                and fname
-                and lname
-                and password1
-                and password2
-                and gstin
-            ):
-                result = SellerServices.create_new_user_service(
+            result = SellerServices.create_new_seller(
+                request_data=CreateSellerRequestType(**request.data)
+            )
+            if result.get("successMessage"):
+                return Response(
                     data={
-                        "gstin": gstin,
-                        "username": username,
-                        "email": email,
-                        "fname": fname,
-                        "lname": lname,
-                        "password1": password1,
-                        "password2": password2,
-                        "account_type": self.ACCOUNT_TYPE,
-                    }
+                        "successMessage": result.get("successMessage"),
+                        "errorMessage": None,
+                    },
+                    status=status.HTTP_201_CREATED,
+                    content_type="application/json",
                 )
-                if result.get("successMessage"):
-                    return Response(
-                        data={
-                            "successMessage": result.get("successMessage"),
-                            "errorMessage": None,
-                        },
-                        status=status.HTTP_201_CREATED,
-                        content_type="application/json",
-                    )
-            else:
-                raise ValueError("Input data are not in correct format.")
-
         except DatabaseError as e:
             logging.error(
                 f"DatabaseError: Error Occured While saving users details: {e}"

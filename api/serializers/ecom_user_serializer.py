@@ -2,7 +2,6 @@ from typing import Optional
 from rest_framework import serializers
 
 from api.models.definitions import ACCOUNT_TYPE_CHOICES
-from api.models.export_types.export_user import ExportECOMUser
 from api.models.user_models.user import ECOMUser
 from api.models.export_types.validation_types.validation_result import ValidationResult
 from api.services.encryption_services.encryption_service import EncryptionServices
@@ -107,7 +106,7 @@ class ECOMUserSerializer(serializers.ModelSerializer):
         ):
             return True
 
-    def create(self, data: dict) -> ExportECOMUser:
+    def create(self, data: dict) -> ECOMUser:
         email = data.get("email")
         fname = data.get("fname")
         lname = data.get("lname")
@@ -133,4 +132,4 @@ class ECOMUserSerializer(serializers.ModelSerializer):
                     password=EncryptionServices().encrypt(password1),
                 )
             user.save()
-            return ExportECOMUser(**user.model_to_dict())
+            return user

@@ -17,11 +17,8 @@ from api.auth_exceptions.user_exceptions import (
     OTPNotVerifiedError,
     EmailNotSentError,
 )
-from api.models.export_types.export_user import ExportECOMUser
-from api.models.user_models.user import ECOMUser
-from api.services.helpers import validate_email_format
-from api.services.otp_services.otp_services import OTPServices
-from api.services.token_services.token_generator import TokenGenerator
+from api.models.request_data_types.verify_otp import VerifyOTPRequestType
+from api.services.user_services.user_services import UserServices
 
 
 class ValidateOTPView(APIView):
@@ -85,37 +82,17 @@ class ValidateOTPView(APIView):
     )
     def post(self, request: Request):
         try:
-            request_data = request.data
-            email = request_data.get("email")
-            otp = request_data.get("otp")
-            if email and validate_email_format(email) and otp and len(otp) == 6:
-                user_exists = (
-                    True if ECOMUser.objects.filter(email=email).count() > 0 else False
-                )
-
-                if user_exists:
-                    user = ECOMUser.objects.get(email=email)
-                    user = ExportECOMUser(**user.model_to_dict())
-                    if not user.is_active:
-                        response = OTPServices().verify_otp(user, otp)
-                        if response:
-                            token = TokenGenerator().get_tokens_for_user(user)
-                            return Response(
-                                data={
-                                    "token": token,
-                                    "errorMessage": None,
-                                },
-                                status=status.HTTP_200_OK,
-                                content_type="application/json",
-                            )
-                        else:
-                            raise OTPNotVerifiedError()
-                    else:
-                        raise UserAlreadyVerifiedError()
-                else:
-                    raise UserNotFoundError()
-            else:
-                raise ValueError("Email & OTP data are invalid.")
+            token = UserServices().verify_user_with_otp(
+                request_data=VerifyOTPRequestType(**request.data)
+            )
+            return Response(
+                data={
+                    "token": token,
+                    "errorMessage": None,
+                },
+                status=status.HTTP_200_OK,
+                content_type="application/json",
+            )
         except EmailNotSentError as e:
             return Response(
                 data={
