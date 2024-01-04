@@ -26,11 +26,11 @@ class SellerDetailView(APIView):
     renderer_classes = [JSONRenderer]
 
     @swagger_auto_schema(
-        operation_summary="Get User Details",
-        operation_description="Get User Details",
+        operation_summary="Get Seller Details",
+        operation_description="Get Seller Details",
         responses={
             200: Schema(
-                title="Get-User-Details Response",
+                title="Get-Seller-Details Response",
                 type=openapi.TYPE_OBJECT,
                 properties={
                     "successMessage": Schema(
@@ -51,7 +51,7 @@ class SellerDetailView(APIView):
                 },
             ),
             "default": Schema(
-                title="Get-User-Details Response",
+                title="Get-Seller-Details Response",
                 type=openapi.TYPE_OBJECT,
                 properties={
                     "successMessage": Schema(

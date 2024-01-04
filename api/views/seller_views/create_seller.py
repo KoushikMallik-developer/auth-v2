@@ -23,12 +23,17 @@ class CreateSellerView(APIView):
     renderer_classes = [JSONRenderer]
 
     @swagger_auto_schema(
-        operation_summary="Sign Up User",
-        operation_description="Sign Up User",
+        operation_summary="Sign Up Seller",
+        operation_description="Sign Up Seller",
         request_body=Schema(
-            title="Sign-up Request",
+            title="Seller-Sign-up Request",
             type=openapi.TYPE_OBJECT,
             properties={
+                "gstin": Schema(
+                    name="gstin",
+                    in_=openapi.IN_BODY,
+                    type=openapi.TYPE_STRING,
+                ),
                 "email": Schema(
                     name="email",
                     in_=openapi.IN_BODY,
@@ -66,7 +71,7 @@ class CreateSellerView(APIView):
         ),
         responses={
             201: Schema(
-                title="Sign-up Response",
+                title="Seller-Sign-up Response",
                 type=openapi.TYPE_OBJECT,
                 properties={
                     "successMessage": Schema(
@@ -82,7 +87,7 @@ class CreateSellerView(APIView):
                 },
             ),
             "default": Schema(
-                title="Sign-up Response",
+                title="Seller-Sign-up Response",
                 type=openapi.TYPE_OBJECT,
                 properties={
                     "successMessage": Schema(

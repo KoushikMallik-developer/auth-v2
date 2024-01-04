@@ -28,10 +28,10 @@ class UpdateSellerProfileView(APIView):
     renderer_classes = [JSONRenderer]
 
     @swagger_auto_schema(
-        operation_summary="Update User Details",
-        operation_description="Update User Details",
+        operation_summary="Update Seller Details",
+        operation_description="Update Seller Details",
         request_body=Schema(
-            title="Update-Profile Request",
+            title="Update-Seller-Profile Request",
             type=openapi.TYPE_OBJECT,
             properties={
                 "fname": Schema(
@@ -49,6 +49,61 @@ class UpdateSellerProfileView(APIView):
                     in_=openapi.IN_BODY,
                     type=openapi.TYPE_STRING,
                 ),
+                "company_name": Schema(
+                    name="company_name",
+                    in_=openapi.IN_BODY,
+                    type=openapi.TYPE_STRING,
+                ),
+                "image": Schema(
+                    name="image",
+                    in_=openapi.IN_BODY,
+                    type=openapi.TYPE_STRING,
+                ),
+                "bio": Schema(
+                    name="bio",
+                    in_=openapi.IN_BODY,
+                    type=openapi.TYPE_STRING,
+                ),
+                "website": Schema(
+                    name="website",
+                    in_=openapi.IN_BODY,
+                    type=openapi.TYPE_STRING,
+                ),
+                "address_line1": Schema(
+                    name="address_line1",
+                    in_=openapi.IN_BODY,
+                    type=openapi.TYPE_STRING,
+                ),
+                "address_line2": Schema(
+                    name="address_line2",
+                    in_=openapi.IN_BODY,
+                    type=openapi.TYPE_STRING,
+                ),
+                "state": Schema(
+                    name="state",
+                    in_=openapi.IN_BODY,
+                    type=openapi.TYPE_STRING,
+                ),
+                "city": Schema(
+                    name="city",
+                    in_=openapi.IN_BODY,
+                    type=openapi.TYPE_STRING,
+                ),
+                "pin": Schema(
+                    name="pin",
+                    in_=openapi.IN_BODY,
+                    type=openapi.TYPE_STRING,
+                ),
+                "country": Schema(
+                    name="country",
+                    in_=openapi.IN_BODY,
+                    type=openapi.TYPE_STRING,
+                ),
+                "landmark": Schema(
+                    name="landmark",
+                    in_=openapi.IN_BODY,
+                    type=openapi.TYPE_STRING,
+                ),
                 "dob": Schema(
                     name="dob",
                     in_=openapi.IN_BODY,
@@ -59,7 +114,7 @@ class UpdateSellerProfileView(APIView):
         ),
         responses={
             200: Schema(
-                title="Update-Profile Response",
+                title="Update-Seller-Profile Response",
                 type=openapi.TYPE_OBJECT,
                 properties={
                     "successMessage": Schema(
@@ -75,7 +130,7 @@ class UpdateSellerProfileView(APIView):
                 },
             ),
             "default": Schema(
-                title="Update-Profile Response",
+                title="Update-Seller-Profile Response",
                 type=openapi.TYPE_OBJECT,
                 properties={
                     "successMessage": Schema(
