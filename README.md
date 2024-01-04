@@ -6,9 +6,7 @@
 
 
 
-An API layer to authenticate users and update profile details.
-
-Your README file is normally the first entry point to your code. It should tell people why they should use your module, how they can install it, and how they can use it. Standardizing how you write your README makes creating and maintaining your READMEs easier. Great documentation takes work!
+An API layer to authenticate users, sellers and admins.
 
 [![MIT License](https://img.shields.io/badge/License-MIT-green.svg)](https://choosealicense.com/licenses/mit/)
 
@@ -67,3 +65,7 @@ Run the server.
 ```bash
   python .\manage.py runserver 8080
 ```
+
+## 🔗 Links
+[Staging](https://auth-stg.onrender.com/)\
+[Production](https://auth-shoppixa.onrender.com/)
