@@ -1,9 +1,10 @@
 import logging
 
 from psycopg2 import DatabaseError
-from drf_yasg import openapi
-from drf_yasg.openapi import Schema
-from drf_yasg.utils import swagger_auto_schema
+
+# from drf_yasg import openapi
+# from drf_yasg.openapi import Schema
+# from drf_yasg.utils import swagger_auto_schema
 from pydantic import ValidationError
 from rest_framework.renderers import JSONRenderer
 from rest_framework.views import APIView
@@ -23,56 +24,56 @@ from api.services.user_services.user_services import UserServices
 class PasswordResetView(APIView):
     renderer_classes = [JSONRenderer]
 
-    @swagger_auto_schema(
-        operation_summary="Reset User Password",
-        operation_description="Reset User Password",
-        request_body=Schema(
-            title="Reset-Password Request",
-            type=openapi.TYPE_OBJECT,
-            properties={
-                "email": Schema(
-                    name="email",
-                    in_=openapi.IN_BODY,
-                    type=openapi.TYPE_STRING,
-                    format=openapi.FORMAT_EMAIL,
-                ),
-            },
-        ),
-        responses={
-            200: Schema(
-                title="Reset-Password Response",
-                type=openapi.TYPE_OBJECT,
-                properties={
-                    "successMessage": Schema(
-                        name="successMessage",
-                        in_=openapi.IN_BODY,
-                        type=openapi.TYPE_STRING,
-                    ),
-                    "errorMessage": Schema(
-                        name="errorMessage",
-                        in_=openapi.IN_BODY,
-                        type=openapi.TYPE_STRING,
-                    ),
-                },
-            ),
-            "default": Schema(
-                title="Reset-Password Response",
-                type=openapi.TYPE_OBJECT,
-                properties={
-                    "successMessage": Schema(
-                        name="successMessage",
-                        in_=openapi.IN_BODY,
-                        type=openapi.TYPE_STRING,
-                    ),
-                    "errorMessage": Schema(
-                        name="errorMessage",
-                        in_=openapi.IN_BODY,
-                        type=openapi.TYPE_STRING,
-                    ),
-                },
-            ),
-        },
-    )
+    # @swagger_auto_schema(
+    #     operation_summary="Reset User Password",
+    #     operation_description="Reset User Password",
+    #     request_body=Schema(
+    #         title="Reset-Password Request",
+    #         type=openapi.TYPE_OBJECT,
+    #         properties={
+    #             "email": Schema(
+    #                 name="email",
+    #                 in_=openapi.IN_BODY,
+    #                 type=openapi.TYPE_STRING,
+    #                 format=openapi.FORMAT_EMAIL,
+    #             ),
+    #         },
+    #     ),
+    #     responses={
+    #         200: Schema(
+    #             title="Reset-Password Response",
+    #             type=openapi.TYPE_OBJECT,
+    #             properties={
+    #                 "successMessage": Schema(
+    #                     name="successMessage",
+    #                     in_=openapi.IN_BODY,
+    #                     type=openapi.TYPE_STRING,
+    #                 ),
+    #                 "errorMessage": Schema(
+    #                     name="errorMessage",
+    #                     in_=openapi.IN_BODY,
+    #                     type=openapi.TYPE_STRING,
+    #                 ),
+    #             },
+    #         ),
+    #         "default": Schema(
+    #             title="Reset-Password Response",
+    #             type=openapi.TYPE_OBJECT,
+    #             properties={
+    #                 "successMessage": Schema(
+    #                     name="successMessage",
+    #                     in_=openapi.IN_BODY,
+    #                     type=openapi.TYPE_STRING,
+    #                 ),
+    #                 "errorMessage": Schema(
+    #                     name="errorMessage",
+    #                     in_=openapi.IN_BODY,
+    #                     type=openapi.TYPE_STRING,
+    #                 ),
+    #             },
+    #         ),
+    #     },
+    # )
     def post(self, request):
         try:
             email = request.data.get("email")

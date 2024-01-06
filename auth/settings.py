@@ -30,10 +30,11 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
     "api",
     "rest_framework",
-    "drf_yasg",
+    # "drf_yasg",
     "corsheaders",
     "storages",
     "import_export",
+    "drf_spectacular",
 ]
 
 MIDDLEWARE = [
@@ -120,6 +121,7 @@ REST_FRAMEWORK = {
     "DEFAULT_PERMISSION_CLASSES": [
         "rest_framework.permissions.AllowAny",
     ],
+    "DEFAULT_SCHEMA_CLASS": "drf_spectacular.openapi.AutoSchema",
 }
 SIMPLE_JWT = {
     "ACCESS_TOKEN_LIFETIME": timedelta(

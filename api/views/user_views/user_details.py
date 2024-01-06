@@ -1,9 +1,10 @@
 import logging
 
 from psycopg2 import DatabaseError
-from drf_yasg import openapi
-from drf_yasg.openapi import Schema
-from drf_yasg.utils import swagger_auto_schema
+
+# from drf_yasg import openapi
+# from drf_yasg.openapi import Schema
+# from drf_yasg.utils import swagger_auto_schema
 from pydantic import ValidationError
 from rest_framework import serializers, status
 from rest_framework.renderers import JSONRenderer
@@ -25,49 +26,49 @@ from api.views.helpers import is_regular_account
 class UserDetailView(APIView):
     renderer_classes = [JSONRenderer]
 
-    @swagger_auto_schema(
-        operation_summary="Get User Details",
-        operation_description="Get User Details",
-        responses={
-            200: Schema(
-                title="Get-User-Details Response",
-                type=openapi.TYPE_OBJECT,
-                properties={
-                    "successMessage": Schema(
-                        name="successMessage",
-                        in_=openapi.IN_BODY,
-                        type=openapi.TYPE_STRING,
-                    ),
-                    "data": Schema(
-                        name="successMessage",
-                        in_=openapi.IN_BODY,
-                        type=openapi.TYPE_OBJECT,
-                    ),
-                    "errorMessage": Schema(
-                        name="errorMessage",
-                        in_=openapi.IN_BODY,
-                        type=openapi.TYPE_STRING,
-                    ),
-                },
-            ),
-            "default": Schema(
-                title="Get-User-Details Response",
-                type=openapi.TYPE_OBJECT,
-                properties={
-                    "successMessage": Schema(
-                        name="successMessage",
-                        in_=openapi.IN_BODY,
-                        type=openapi.TYPE_STRING,
-                    ),
-                    "errorMessage": Schema(
-                        name="errorMessage",
-                        in_=openapi.IN_BODY,
-                        type=openapi.TYPE_STRING,
-                    ),
-                },
-            ),
-        },
-    )
+    # @swagger_auto_schema(
+    #     operation_summary="Get User Details",
+    #     operation_description="Get User Details",
+    #     responses={
+    #         200: Schema(
+    #             title="Get-User-Details Response",
+    #             type=openapi.TYPE_OBJECT,
+    #             properties={
+    #                 "successMessage": Schema(
+    #                     name="successMessage",
+    #                     in_=openapi.IN_BODY,
+    #                     type=openapi.TYPE_STRING,
+    #                 ),
+    #                 "data": Schema(
+    #                     name="successMessage",
+    #                     in_=openapi.IN_BODY,
+    #                     type=openapi.TYPE_OBJECT,
+    #                 ),
+    #                 "errorMessage": Schema(
+    #                     name="errorMessage",
+    #                     in_=openapi.IN_BODY,
+    #                     type=openapi.TYPE_STRING,
+    #                 ),
+    #             },
+    #         ),
+    #         "default": Schema(
+    #             title="Get-User-Details Response",
+    #             type=openapi.TYPE_OBJECT,
+    #             properties={
+    #                 "successMessage": Schema(
+    #                     name="successMessage",
+    #                     in_=openapi.IN_BODY,
+    #                     type=openapi.TYPE_STRING,
+    #                 ),
+    #                 "errorMessage": Schema(
+    #                     name="errorMessage",
+    #                     in_=openapi.IN_BODY,
+    #                     type=openapi.TYPE_STRING,
+    #                 ),
+    #             },
+    #         ),
+    #     },
+    # )
     def get(self, request):
         try:
             user_id = decode_jwt_token(request=request)

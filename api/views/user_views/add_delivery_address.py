@@ -1,8 +1,8 @@
 import logging
 
-from drf_yasg import openapi
-from drf_yasg.openapi import Schema
-from drf_yasg.utils import swagger_auto_schema
+# from drf_yasg import openapi
+# from drf_yasg.openapi import Schema
+# from drf_yasg.utils import swagger_auto_schema
 from psycopg2 import DatabaseError
 from pydantic import ValidationError
 from rest_framework import serializers, status
@@ -27,105 +27,105 @@ from api.services.user_services.user_services import UserServices
 class AddDeliveryAddress(APIView):
     renderer_classes = [JSONRenderer]
 
-    @swagger_auto_schema(
-        operation_summary="Add-Delivery-Address",
-        operation_description="Add-Delivery-Address",
-        request_body=Schema(
-            title="Add-Delivery-Address Request",
-            type=openapi.TYPE_OBJECT,
-            properties={
-                "address_line1": Schema(
-                    name="address_line1",
-                    in_=openapi.IN_BODY,
-                    type=openapi.TYPE_STRING,
-                ),
-                "address_line2": Schema(
-                    name="address_line2",
-                    in_=openapi.IN_BODY,
-                    type=openapi.TYPE_STRING,
-                ),
-                "city": Schema(
-                    name="city",
-                    in_=openapi.IN_BODY,
-                    type=openapi.TYPE_STRING,
-                ),
-                "state": Schema(
-                    name="state",
-                    in_=openapi.IN_BODY,
-                    type=openapi.TYPE_STRING,
-                ),
-                "country": Schema(
-                    name="country",
-                    in_=openapi.IN_BODY,
-                    type=openapi.TYPE_STRING,
-                ),
-                "pin": Schema(
-                    name="pin",
-                    in_=openapi.IN_BODY,
-                    type=openapi.TYPE_STRING,
-                ),
-                "landmark": Schema(
-                    name="landmark",
-                    in_=openapi.IN_BODY,
-                    type=openapi.TYPE_STRING,
-                ),
-                "address_type": Schema(
-                    name="address_type",
-                    in_=openapi.IN_BODY,
-                    type=openapi.TYPE_STRING,
-                ),
-                "is_default": Schema(
-                    name="is_default",
-                    in_=openapi.IN_BODY,
-                    type=openapi.TYPE_STRING,
-                ),
-                "delivery_to_phone": Schema(
-                    name="delivery_to_phone",
-                    in_=openapi.IN_BODY,
-                    type=openapi.TYPE_STRING,
-                ),
-                "delivery_to_person_name": Schema(
-                    name="delivery_to_person_name",
-                    in_=openapi.IN_BODY,
-                    type=openapi.TYPE_STRING,
-                ),
-            },
-        ),
-        responses={
-            201: Schema(
-                title="Add-Delivery-Address Response",
-                type=openapi.TYPE_OBJECT,
-                properties={
-                    "successMessage": Schema(
-                        name="successMessage",
-                        in_=openapi.IN_BODY,
-                        type=openapi.TYPE_STRING,
-                    ),
-                    "errorMessage": Schema(
-                        name="errorMessage",
-                        in_=openapi.IN_BODY,
-                        type=openapi.TYPE_STRING,
-                    ),
-                },
-            ),
-            "default": Schema(
-                title="Add-Delivery-Address Response",
-                type=openapi.TYPE_OBJECT,
-                properties={
-                    "successMessage": Schema(
-                        name="successMessage",
-                        in_=openapi.IN_BODY,
-                        type=openapi.TYPE_STRING,
-                    ),
-                    "errorMessage": Schema(
-                        name="errorMessage",
-                        in_=openapi.IN_BODY,
-                        type=openapi.TYPE_STRING,
-                    ),
-                },
-            ),
-        },
-    )
+    # @swagger_auto_schema(
+    #     operation_summary="Add-Delivery-Address",
+    #     operation_description="Add-Delivery-Address",
+    #     request_body=Schema(
+    #         title="Add-Delivery-Address Request",
+    #         type=openapi.TYPE_OBJECT,
+    #         properties={
+    #             "address_line1": Schema(
+    #                 name="address_line1",
+    #                 in_=openapi.IN_BODY,
+    #                 type=openapi.TYPE_STRING,
+    #             ),
+    #             "address_line2": Schema(
+    #                 name="address_line2",
+    #                 in_=openapi.IN_BODY,
+    #                 type=openapi.TYPE_STRING,
+    #             ),
+    #             "city": Schema(
+    #                 name="city",
+    #                 in_=openapi.IN_BODY,
+    #                 type=openapi.TYPE_STRING,
+    #             ),
+    #             "state": Schema(
+    #                 name="state",
+    #                 in_=openapi.IN_BODY,
+    #                 type=openapi.TYPE_STRING,
+    #             ),
+    #             "country": Schema(
+    #                 name="country",
+    #                 in_=openapi.IN_BODY,
+    #                 type=openapi.TYPE_STRING,
+    #             ),
+    #             "pin": Schema(
+    #                 name="pin",
+    #                 in_=openapi.IN_BODY,
+    #                 type=openapi.TYPE_STRING,
+    #             ),
+    #             "landmark": Schema(
+    #                 name="landmark",
+    #                 in_=openapi.IN_BODY,
+    #                 type=openapi.TYPE_STRING,
+    #             ),
+    #             "address_type": Schema(
+    #                 name="address_type",
+    #                 in_=openapi.IN_BODY,
+    #                 type=openapi.TYPE_STRING,
+    #             ),
+    #             "is_default": Schema(
+    #                 name="is_default",
+    #                 in_=openapi.IN_BODY,
+    #                 type=openapi.TYPE_STRING,
+    #             ),
+    #             "delivery_to_phone": Schema(
+    #                 name="delivery_to_phone",
+    #                 in_=openapi.IN_BODY,
+    #                 type=openapi.TYPE_STRING,
+    #             ),
+    #             "delivery_to_person_name": Schema(
+    #                 name="delivery_to_person_name",
+    #                 in_=openapi.IN_BODY,
+    #                 type=openapi.TYPE_STRING,
+    #             ),
+    #         },
+    #     ),
+    #     responses={
+    #         201: Schema(
+    #             title="Add-Delivery-Address Response",
+    #             type=openapi.TYPE_OBJECT,
+    #             properties={
+    #                 "successMessage": Schema(
+    #                     name="successMessage",
+    #                     in_=openapi.IN_BODY,
+    #                     type=openapi.TYPE_STRING,
+    #                 ),
+    #                 "errorMessage": Schema(
+    #                     name="errorMessage",
+    #                     in_=openapi.IN_BODY,
+    #                     type=openapi.TYPE_STRING,
+    #                 ),
+    #             },
+    #         ),
+    #         "default": Schema(
+    #             title="Add-Delivery-Address Response",
+    #             type=openapi.TYPE_OBJECT,
+    #             properties={
+    #                 "successMessage": Schema(
+    #                     name="successMessage",
+    #                     in_=openapi.IN_BODY,
+    #                     type=openapi.TYPE_STRING,
+    #                 ),
+    #                 "errorMessage": Schema(
+    #                     name="errorMessage",
+    #                     in_=openapi.IN_BODY,
+    #                     type=openapi.TYPE_STRING,
+    #                 ),
+    #             },
+    #         ),
+    #     },
+    # )
     def post(self, request):
         try:
             user_id = decode_jwt_token(request=request)

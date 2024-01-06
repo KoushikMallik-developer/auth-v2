@@ -1,9 +1,10 @@
 import logging
 
 from psycopg2 import DatabaseError
-from drf_yasg import openapi
-from drf_yasg.openapi import Schema
-from drf_yasg.utils import swagger_auto_schema
+
+# from drf_yasg import openapi
+# from drf_yasg.openapi import Schema
+# from drf_yasg.utils import swagger_auto_schema
 from pydantic import ValidationError
 from rest_framework import status, serializers
 from rest_framework.renderers import JSONRenderer
@@ -23,56 +24,56 @@ from api.services.helpers import validate_user_email
 class RemoveUserView(APIView):
     renderer_classes = [JSONRenderer]
 
-    @swagger_auto_schema(
-        operation_summary="Delete User",
-        operation_description="Delete User",
-        request_body=Schema(
-            title="Delete-User Request",
-            type=openapi.TYPE_OBJECT,
-            properties={
-                "email": Schema(
-                    name="email",
-                    in_=openapi.IN_BODY,
-                    type=openapi.TYPE_STRING,
-                    format=openapi.FORMAT_EMAIL,
-                ),
-            },
-        ),
-        responses={
-            200: Schema(
-                title="Delete-User Response",
-                type=openapi.TYPE_OBJECT,
-                properties={
-                    "successMessage": Schema(
-                        name="successMessage",
-                        in_=openapi.IN_BODY,
-                        type=openapi.TYPE_STRING,
-                    ),
-                    "errorMessage": Schema(
-                        name="errorMessage",
-                        in_=openapi.IN_BODY,
-                        type=openapi.TYPE_STRING,
-                    ),
-                },
-            ),
-            "default": Schema(
-                title="Delete-User Response",
-                type=openapi.TYPE_OBJECT,
-                properties={
-                    "successMessage": Schema(
-                        name="successMessage",
-                        in_=openapi.IN_BODY,
-                        type=openapi.TYPE_STRING,
-                    ),
-                    "errorMessage": Schema(
-                        name="errorMessage",
-                        in_=openapi.IN_BODY,
-                        type=openapi.TYPE_STRING,
-                    ),
-                },
-            ),
-        },
-    )
+    # @swagger_auto_schema(
+    #     operation_summary="Delete User",
+    #     operation_description="Delete User",
+    #     request_body=Schema(
+    #         title="Delete-User Request",
+    #         type=openapi.TYPE_OBJECT,
+    #         properties={
+    #             "email": Schema(
+    #                 name="email",
+    #                 in_=openapi.IN_BODY,
+    #                 type=openapi.TYPE_STRING,
+    #                 format=openapi.FORMAT_EMAIL,
+    #             ),
+    #         },
+    #     ),
+    #     responses={
+    #         200: Schema(
+    #             title="Delete-User Response",
+    #             type=openapi.TYPE_OBJECT,
+    #             properties={
+    #                 "successMessage": Schema(
+    #                     name="successMessage",
+    #                     in_=openapi.IN_BODY,
+    #                     type=openapi.TYPE_STRING,
+    #                 ),
+    #                 "errorMessage": Schema(
+    #                     name="errorMessage",
+    #                     in_=openapi.IN_BODY,
+    #                     type=openapi.TYPE_STRING,
+    #                 ),
+    #             },
+    #         ),
+    #         "default": Schema(
+    #             title="Delete-User Response",
+    #             type=openapi.TYPE_OBJECT,
+    #             properties={
+    #                 "successMessage": Schema(
+    #                     name="successMessage",
+    #                     in_=openapi.IN_BODY,
+    #                     type=openapi.TYPE_STRING,
+    #                 ),
+    #                 "errorMessage": Schema(
+    #                     name="errorMessage",
+    #                     in_=openapi.IN_BODY,
+    #                     type=openapi.TYPE_STRING,
+    #                 ),
+    #             },
+    #         ),
+    #     },
+    # )
     def post(self, request):
         try:
             email = request.data.get("email")

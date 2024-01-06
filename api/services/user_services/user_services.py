@@ -19,6 +19,10 @@ from api.models.request_data_types.update_user_profile import (
     UpdateUserProfileRequestType,
 )
 from api.models.request_data_types.verify_otp import VerifyOTPRequestType
+from api.models.response_data_types.response_data import ResponseData
+from api.models.response_data_types.response_data_types_for_swagger import (
+    AllUsersResponseData,
+)
 from api.models.user_models.delivery_address import DeliveryAddress
 from api.models.export_types.export_user import ExportECOMUser, ExportECOMUserList
 from api.models.user_models.user import ECOMUser
@@ -45,7 +49,7 @@ from api.services.token_services.token_generator import TokenGenerator
 
 class UserServices:
     @staticmethod
-    def get_all_users_service() -> Optional[ExportECOMUserList]:
+    def get_all_users_service() -> Optional[AllUsersResponseData]:
         try:
             users = ECOMUser.objects.all()
         except Exception:
@@ -58,20 +62,17 @@ class UserServices:
                 )
                 all_user_details.append(user_export_details)
             all_user_details = ExportECOMUserList(user_list=all_user_details)
-            return all_user_details
+            return AllUsersResponseData(data=all_user_details)
         else:
             return None
 
     @staticmethod
-    def create_new_user_service(request_data: CreateUserRequestType) -> dict:
+    def create_new_user_service(request_data: CreateUserRequestType) -> ResponseData:
         user: ECOMUser = ECOMUserSerializer().create(data=request_data.model_dump())
         if user:
             response = OTPServices().send_otp_to_user(user.email)
             if response == "OK":
-                return {
-                    "successMessage": DEFAULT_VERIFICATION_MESSAGE,
-                    "errorMessage": None,
-                }
+                return ResponseData(successMessage=DEFAULT_VERIFICATION_MESSAGE)
             else:
                 raise EmailNotSentError()
 

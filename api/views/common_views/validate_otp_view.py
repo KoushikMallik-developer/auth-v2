@@ -7,9 +7,9 @@ from rest_framework.request import Request
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from drf_yasg import openapi
-from drf_yasg.openapi import Schema
-from drf_yasg.utils import swagger_auto_schema
+# from drf_yasg import openapi
+# from drf_yasg.openapi import Schema
+# from drf_yasg.utils import swagger_auto_schema
 
 from api.auth_exceptions.user_exceptions import (
     UserNotFoundError,
@@ -24,62 +24,62 @@ from api.services.user_services.user_services import UserServices
 class ValidateOTPView(APIView):
     renderer_classes = [JSONRenderer]
 
-    @swagger_auto_schema(
-        operation_summary="Verify OTP",
-        operation_description="Verify OTP",
-        request_body=Schema(
-            title="Verify-OTP Request",
-            type=openapi.TYPE_OBJECT,
-            properties={
-                "email": Schema(
-                    name="email",
-                    in_=openapi.IN_BODY,
-                    type=openapi.TYPE_STRING,
-                    format=openapi.FORMAT_EMAIL,
-                ),
-                "otp": Schema(
-                    name="otp",
-                    in_=openapi.IN_BODY,
-                    type=openapi.TYPE_STRING,
-                ),
-            },
-        ),
-        responses={
-            200: Schema(
-                title="Verify-OTP Response",
-                type=openapi.TYPE_OBJECT,
-                properties={
-                    "successMessage": Schema(
-                        name="successMessage",
-                        in_=openapi.IN_BODY,
-                        type=openapi.TYPE_STRING,
-                    ),
-                    "errorMessage": Schema(
-                        name="errorMessage",
-                        in_=openapi.IN_BODY,
-                        type=openapi.TYPE_STRING,
-                    ),
-                },
-            ),
-            201: None,
-            "default": Schema(
-                title="Verify-OTP Response",
-                type=openapi.TYPE_OBJECT,
-                properties={
-                    "successMessage": Schema(
-                        name="successMessage",
-                        in_=openapi.IN_BODY,
-                        type=openapi.TYPE_STRING,
-                    ),
-                    "errorMessage": Schema(
-                        name="errorMessage",
-                        in_=openapi.IN_BODY,
-                        type=openapi.TYPE_STRING,
-                    ),
-                },
-            ),
-        },
-    )
+    # @swagger_auto_schema(
+    #     operation_summary="Verify OTP",
+    #     operation_description="Verify OTP",
+    #     request_body=Schema(
+    #         title="Verify-OTP Request",
+    #         type=openapi.TYPE_OBJECT,
+    #         properties={
+    #             "email": Schema(
+    #                 name="email",
+    #                 in_=openapi.IN_BODY,
+    #                 type=openapi.TYPE_STRING,
+    #                 format=openapi.FORMAT_EMAIL,
+    #             ),
+    #             "otp": Schema(
+    #                 name="otp",
+    #                 in_=openapi.IN_BODY,
+    #                 type=openapi.TYPE_STRING,
+    #             ),
+    #         },
+    #     ),
+    #     responses={
+    #         200: Schema(
+    #             title="Verify-OTP Response",
+    #             type=openapi.TYPE_OBJECT,
+    #             properties={
+    #                 "successMessage": Schema(
+    #                     name="successMessage",
+    #                     in_=openapi.IN_BODY,
+    #                     type=openapi.TYPE_STRING,
+    #                 ),
+    #                 "errorMessage": Schema(
+    #                     name="errorMessage",
+    #                     in_=openapi.IN_BODY,
+    #                     type=openapi.TYPE_STRING,
+    #                 ),
+    #             },
+    #         ),
+    #         201: None,
+    #         "default": Schema(
+    #             title="Verify-OTP Response",
+    #             type=openapi.TYPE_OBJECT,
+    #             properties={
+    #                 "successMessage": Schema(
+    #                     name="successMessage",
+    #                     in_=openapi.IN_BODY,
+    #                     type=openapi.TYPE_STRING,
+    #                 ),
+    #                 "errorMessage": Schema(
+    #                     name="errorMessage",
+    #                     in_=openapi.IN_BODY,
+    #                     type=openapi.TYPE_STRING,
+    #                 ),
+    #             },
+    #         ),
+    #     },
+    # )
     def post(self, request: Request):
         try:
             token = UserServices().verify_user_with_otp(

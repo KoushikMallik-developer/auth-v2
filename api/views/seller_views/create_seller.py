@@ -9,9 +9,9 @@ from rest_framework.request import Request
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from drf_yasg import openapi
-from drf_yasg.openapi import Schema
-from drf_yasg.utils import swagger_auto_schema
+# from drf_yasg import openapi
+# from drf_yasg.openapi import Schema
+# from drf_yasg.utils import swagger_auto_schema
 
 from api.auth_exceptions.user_exceptions import EmailNotSentError
 from api.models.request_data_types.create_seller import CreateSellerRequestType
@@ -22,88 +22,88 @@ class CreateSellerView(APIView):
     ACCOUNT_TYPE = "Seller"
     renderer_classes = [JSONRenderer]
 
-    @swagger_auto_schema(
-        operation_summary="Sign Up Seller",
-        operation_description="Sign Up Seller",
-        request_body=Schema(
-            title="Seller-Sign-up Request",
-            type=openapi.TYPE_OBJECT,
-            properties={
-                "gstin": Schema(
-                    name="gstin",
-                    in_=openapi.IN_BODY,
-                    type=openapi.TYPE_STRING,
-                ),
-                "email": Schema(
-                    name="email",
-                    in_=openapi.IN_BODY,
-                    type=openapi.TYPE_STRING,
-                    format=openapi.FORMAT_EMAIL,
-                ),
-                "username": Schema(
-                    name="username",
-                    in_=openapi.IN_BODY,
-                    type=openapi.TYPE_STRING,
-                ),
-                "fname": Schema(
-                    name="fname",
-                    in_=openapi.IN_BODY,
-                    type=openapi.TYPE_STRING,
-                ),
-                "lname": Schema(
-                    name="lname",
-                    in_=openapi.IN_BODY,
-                    type=openapi.TYPE_STRING,
-                ),
-                "password1": Schema(
-                    name="password1",
-                    in_=openapi.IN_BODY,
-                    type=openapi.TYPE_STRING,
-                    format=openapi.FORMAT_PASSWORD,
-                ),
-                "password2": Schema(
-                    name="password2",
-                    in_=openapi.IN_BODY,
-                    type=openapi.TYPE_STRING,
-                    format=openapi.FORMAT_PASSWORD,
-                ),
-            },
-        ),
-        responses={
-            201: Schema(
-                title="Seller-Sign-up Response",
-                type=openapi.TYPE_OBJECT,
-                properties={
-                    "successMessage": Schema(
-                        name="successMessage",
-                        in_=openapi.IN_BODY,
-                        type=openapi.TYPE_STRING,
-                    ),
-                    "errorMessage": Schema(
-                        name="errorMessage",
-                        in_=openapi.IN_BODY,
-                        type=openapi.TYPE_STRING,
-                    ),
-                },
-            ),
-            "default": Schema(
-                title="Seller-Sign-up Response",
-                type=openapi.TYPE_OBJECT,
-                properties={
-                    "successMessage": Schema(
-                        name="successMessage",
-                        in_=openapi.IN_BODY,
-                        type=openapi.TYPE_STRING,
-                    ),
-                    "errorMessage": Schema(
-                        name="errorMessage",
-                        in_=openapi.IN_BODY,
-                        type=openapi.TYPE_STRING,
-                    ),
-                },
-            ),
-        },
-    )
+    # @swagger_auto_schema(
+    #     operation_summary="Sign Up Seller",
+    #     operation_description="Sign Up Seller",
+    #     request_body=Schema(
+    #         title="Seller-Sign-up Request",
+    #         type=openapi.TYPE_OBJECT,
+    #         properties={
+    #             "gstin": Schema(
+    #                 name="gstin",
+    #                 in_=openapi.IN_BODY,
+    #                 type=openapi.TYPE_STRING,
+    #             ),
+    #             "email": Schema(
+    #                 name="email",
+    #                 in_=openapi.IN_BODY,
+    #                 type=openapi.TYPE_STRING,
+    #                 format=openapi.FORMAT_EMAIL,
+    #             ),
+    #             "username": Schema(
+    #                 name="username",
+    #                 in_=openapi.IN_BODY,
+    #                 type=openapi.TYPE_STRING,
+    #             ),
+    #             "fname": Schema(
+    #                 name="fname",
+    #                 in_=openapi.IN_BODY,
+    #                 type=openapi.TYPE_STRING,
+    #             ),
+    #             "lname": Schema(
+    #                 name="lname",
+    #                 in_=openapi.IN_BODY,
+    #                 type=openapi.TYPE_STRING,
+    #             ),
+    #             "password1": Schema(
+    #                 name="password1",
+    #                 in_=openapi.IN_BODY,
+    #                 type=openapi.TYPE_STRING,
+    #                 format=openapi.FORMAT_PASSWORD,
+    #             ),
+    #             "password2": Schema(
+    #                 name="password2",
+    #                 in_=openapi.IN_BODY,
+    #                 type=openapi.TYPE_STRING,
+    #                 format=openapi.FORMAT_PASSWORD,
+    #             ),
+    #         },
+    #     ),
+    #     responses={
+    #         201: Schema(
+    #             title="Seller-Sign-up Response",
+    #             type=openapi.TYPE_OBJECT,
+    #             properties={
+    #                 "successMessage": Schema(
+    #                     name="successMessage",
+    #                     in_=openapi.IN_BODY,
+    #                     type=openapi.TYPE_STRING,
+    #                 ),
+    #                 "errorMessage": Schema(
+    #                     name="errorMessage",
+    #                     in_=openapi.IN_BODY,
+    #                     type=openapi.TYPE_STRING,
+    #                 ),
+    #             },
+    #         ),
+    #         "default": Schema(
+    #             title="Seller-Sign-up Response",
+    #             type=openapi.TYPE_OBJECT,
+    #             properties={
+    #                 "successMessage": Schema(
+    #                     name="successMessage",
+    #                     in_=openapi.IN_BODY,
+    #                     type=openapi.TYPE_STRING,
+    #                 ),
+    #                 "errorMessage": Schema(
+    #                     name="errorMessage",
+    #                     in_=openapi.IN_BODY,
+    #                     type=openapi.TYPE_STRING,
+    #                 ),
+    #             },
+    #         ),
+    #     },
+    # )
     def post(self, request: Request):
         try:
             result = SellerServices.create_new_seller(
