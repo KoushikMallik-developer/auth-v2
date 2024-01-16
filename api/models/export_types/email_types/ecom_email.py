@@ -35,7 +35,7 @@ class ECOMEmailMessage(BaseModel):
                 return cls(
                     subject="Shoopixa User Password Reset",
                     body=html_content,
-                    from_email=default_email,
+                    from_email=f"Shoppixa <{default_email}>",
                     to=[user_email],
                 )
             else:
@@ -57,7 +57,7 @@ class ECOMEmailMessage(BaseModel):
                 return cls(
                     subject="Shoopixa User Verification",
                     body=html_content,
-                    from_email="Shoppixa",
+                    from_email=f"Shoppixa <{default_email}>",
                     to=[user_email],
                 )
             else:
