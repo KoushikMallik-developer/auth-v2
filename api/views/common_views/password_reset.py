@@ -2,9 +2,7 @@ import logging
 
 from psycopg2 import DatabaseError
 
-# from drf_yasg import openapi
-# from drf_yasg.openapi import Schema
-# from drf_yasg.utils import swagger_auto_schema
+from drf_spectacular.utils import extend_schema
 from pydantic import ValidationError
 from rest_framework.renderers import JSONRenderer
 from rest_framework.views import APIView
@@ -18,6 +16,8 @@ from api.auth_exceptions.user_exceptions import (
     UserAuthenticationFailedError,
     UserNotVerifiedError,
 )
+from api.models.request_data_types.password_reset import PasswordResetRequestType
+from api.models.response_data_types.response_data import ResponseData
 from api.services.user_services.user_services import UserServices
 
 
@@ -74,6 +74,8 @@ class PasswordResetView(APIView):
     #         ),
     #     },
     # )
+
+    @extend_schema(request=PasswordResetRequestType, responses={200: ResponseData})
     def post(self, request):
         try:
             email = request.data.get("email")

@@ -20,7 +20,7 @@ from api.models.request_data_types.update_user_profile import (
 )
 from api.models.request_data_types.verify_otp import VerifyOTPRequestType
 from api.models.response_data_types.response_data import ResponseData
-from api.models.response_data_types.response_data_types_for_swagger import (
+from api.models.response_data_types.all_user_response_data_type import (
     AllUsersResponseData,
 )
 from api.models.user_models.delivery_address import DeliveryAddress

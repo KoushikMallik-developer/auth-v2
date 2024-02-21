@@ -11,7 +11,6 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 load_dotenv()
 SECRET_KEY = os.environ.get("DJANGO_SECRET_KEY")
 
-
 DEBUG = os.environ.get("DEBUG_MODE") in TRUTH_LIST
 
 # ALLOWED_HOSTS = [
@@ -55,6 +54,10 @@ CORS_ALLOWED_ORIGINS = [
     "http://127.0.0.1:4000",
     "http://127.0.0.1:8080",
     "https://127.0.0.1:8080",
+    "https://shoppixa-stg.netlify.app",
+    "https://shoppixa-dev.netlify.app",
+    "https://shoppixa.netlify.app",
+    "https://shoppixa-qa.netlify.app",
 ]
 
 ROOT_URLCONF = "auth.urls"

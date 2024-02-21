@@ -9,7 +9,7 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from api.models.response_data_types.response_data import ResponseData
-from api.models.response_data_types.response_data_types_for_swagger import (
+from api.models.response_data_types.all_user_response_data_type import (
     AllUsersResponseData,
 )
 from api.services.user_services.user_services import UserServices
