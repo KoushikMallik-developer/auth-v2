@@ -1,9 +1,6 @@
 import logging
 
-from drf_yasg import openapi
-from drf_yasg.openapi import Schema
-from drf_yasg.utils import swagger_auto_schema
-
+from drf_spectacular.utils import extend_schema
 from pydantic import ValidationError
 from rest_framework import status
 from rest_framework.renderers import JSONRenderer
@@ -16,6 +13,7 @@ from api.auth_exceptions.user_exceptions import (
     UserAlreadyVerifiedError,
     EmailNotSentError,
 )
+from api.models.response_data_types.response_data import ResponseData
 from api.models.user_models.user import ECOMUser
 from api.services.definitions import DEFAULT_VERIFICATION_MESSAGE
 
@@ -26,56 +24,8 @@ from api.services.otp_services.otp_services import OTPServices
 class SendOTPView(APIView):
     renderer_classes = [JSONRenderer]
 
-    @swagger_auto_schema(
-        operation_summary="Send-OTP",
-        operation_description="Send-OTP",
-        request_body=Schema(
-            title="Send-OTP Request",
-            type=openapi.TYPE_OBJECT,
-            properties={
-                "email": Schema(
-                    name="email",
-                    in_=openapi.IN_BODY,
-                    type=openapi.TYPE_STRING,
-                    format=openapi.FORMAT_EMAIL,
-                )
-            },
-        ),
-        responses={
-            200: Schema(
-                title="Send-OTP Response",
-                type=openapi.TYPE_OBJECT,
-                properties={
-                    "successMessage": Schema(
-                        name="successMessage",
-                        in_=openapi.IN_BODY,
-                        type=openapi.TYPE_STRING,
-                    ),
-                    "errorMessage": Schema(
-                        name="errorMessage",
-                        in_=openapi.IN_BODY,
-                        type=openapi.TYPE_STRING,
-                    ),
-                },
-            ),
-            201: None,
-            "default": Schema(
-                title="Send-OTP Response",
-                type=openapi.TYPE_OBJECT,
-                properties={
-                    "successMessage": Schema(
-                        name="successMessage",
-                        in_=openapi.IN_BODY,
-                        type=openapi.TYPE_STRING,
-                    ),
-                    "errorMessage": Schema(
-                        name="errorMessage",
-                        in_=openapi.IN_BODY,
-                        type=openapi.TYPE_STRING,
-                    ),
-                },
-            ),
-        },
+    @extend_schema(
+        responses={200: ResponseData},
     )
     def post(self, request: Request):
         try:
@@ -91,11 +41,11 @@ class SendOTPView(APIView):
                     if not user.is_active:
                         response = OTPServices().send_otp_to_user(email)
                         if response == "OK":
+                            response_data = ResponseData(
+                                successMessage=DEFAULT_VERIFICATION_MESSAGE
+                            )
                             return Response(
-                                data={
-                                    "message": DEFAULT_VERIFICATION_MESSAGE,
-                                    "errorMessage": None,
-                                },
+                                data=response_data.model_dump(),
                                 status=status.HTTP_200_OK,
                                 content_type="application/json",
                             )
@@ -108,29 +58,20 @@ class SendOTPView(APIView):
             else:
                 raise ValueError("Email address is not in correct format.")
         except EmailNotSentError as e:
+            error_message = f"EmailNotSentError: {e.msg}"
+            logging.warning(error_message)
+            response_data = ResponseData(errorMessage=error_message)
             return Response(
-                data={
-                    "successMessage": None,
-                    "errorMessage": f"EmailNotSentError: {e.msg}",
-                },
+                data=response_data.model_dump(),
                 status=status.HTTP_500_INTERNAL_SERVER_ERROR,
                 content_type="application/json",
             )
         except UserAlreadyVerifiedError as e:
+            error_message = f"UserAlreadyVerifiedError: {e.msg}"
+            logging.warning(error_message)
+            response_data = ResponseData(errorMessage=error_message)
             return Response(
-                data={
-                    "successMessage": None,
-                    "errorMessage": f"UserAlreadyVerifiedError: {e.msg}",
-                },
-                status=status.HTTP_403_FORBIDDEN,
-                content_type="application/json",
-            )
-        except UserNotFoundError as e:
-            return Response(
-                data={
-                    "successMessage": None,
-                    "errorMessage": f"UserNotFoundError: {e.msg}",
-                },
+                data=response_data.model_dump(),
                 status=status.HTTP_401_UNAUTHORIZED,
                 content_type="application/json",
             )

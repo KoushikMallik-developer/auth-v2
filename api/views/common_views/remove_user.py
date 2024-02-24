@@ -1,9 +1,7 @@
 import logging
 
+from drf_spectacular.utils import extend_schema
 from psycopg2 import DatabaseError
-from drf_yasg import openapi
-from drf_yasg.openapi import Schema
-from drf_yasg.utils import swagger_auto_schema
 from pydantic import ValidationError
 from rest_framework import status, serializers
 from rest_framework.renderers import JSONRenderer
@@ -16,6 +14,8 @@ from api.auth_exceptions.user_exceptions import (
     UserAuthenticationFailedError,
     UserNotVerifiedError,
 )
+from api.models.request_data_types.remove_user import RemoveUserRequestType
+from api.models.response_data_types.response_data import ResponseData
 from api.models.user_models.user import ECOMUser
 from api.services.helpers import validate_user_email
 
@@ -23,66 +23,15 @@ from api.services.helpers import validate_user_email
 class RemoveUserView(APIView):
     renderer_classes = [JSONRenderer]
 
-    @swagger_auto_schema(
-        operation_summary="Delete User",
-        operation_description="Delete User",
-        request_body=Schema(
-            title="Delete-User Request",
-            type=openapi.TYPE_OBJECT,
-            properties={
-                "email": Schema(
-                    name="email",
-                    in_=openapi.IN_BODY,
-                    type=openapi.TYPE_STRING,
-                    format=openapi.FORMAT_EMAIL,
-                ),
-            },
-        ),
-        responses={
-            200: Schema(
-                title="Delete-User Response",
-                type=openapi.TYPE_OBJECT,
-                properties={
-                    "successMessage": Schema(
-                        name="successMessage",
-                        in_=openapi.IN_BODY,
-                        type=openapi.TYPE_STRING,
-                    ),
-                    "errorMessage": Schema(
-                        name="errorMessage",
-                        in_=openapi.IN_BODY,
-                        type=openapi.TYPE_STRING,
-                    ),
-                },
-            ),
-            "default": Schema(
-                title="Delete-User Response",
-                type=openapi.TYPE_OBJECT,
-                properties={
-                    "successMessage": Schema(
-                        name="successMessage",
-                        in_=openapi.IN_BODY,
-                        type=openapi.TYPE_STRING,
-                    ),
-                    "errorMessage": Schema(
-                        name="errorMessage",
-                        in_=openapi.IN_BODY,
-                        type=openapi.TYPE_STRING,
-                    ),
-                },
-            ),
-        },
-    )
+    @extend_schema(request=RemoveUserRequestType, responses={200: ResponseData})
     def post(self, request):
         try:
             email = request.data.get("email")
             if validate_user_email(email=email).is_validated:
                 ECOMUser.objects.get(email=email).delete()
+                data = ResponseData(successMessage="User removed Successfully.")
                 return Response(
-                    data={
-                        "successMessage": "User removed Successfully.",
-                        "errorMessage": None,
-                    },
+                    data=data.model_dump(),
                     status=status.HTTP_200_OK,
                     content_type="application/json",
                 )

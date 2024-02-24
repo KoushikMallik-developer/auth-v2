@@ -1,10 +1,8 @@
 import logging
 
 from django_redis import get_redis_connection
+from drf_spectacular.utils import extend_schema
 from psycopg2 import DatabaseError
-from drf_yasg import openapi
-from drf_yasg.openapi import Schema
-from drf_yasg.utils import swagger_auto_schema
 from pydantic import ValidationError
 from rest_framework import serializers, status
 from rest_framework.renderers import JSONRenderer
@@ -18,57 +16,19 @@ from api.auth_exceptions.user_exceptions import (
     UserNotFoundError,
     UserNotVerifiedError,
 )
+from api.models.response_data_types.response_data import ResponseData
 
 
 class ClearServerCaches(APIView):
     renderer_classes = [JSONRenderer]
 
-    @swagger_auto_schema(
-        operation_summary="Clear Server Caches",
-        operation_description="Clear Server Caches",
-        responses={
-            200: Schema(
-                title="Clear-Server-Caches Response",
-                type=openapi.TYPE_OBJECT,
-                properties={
-                    "successMessage": Schema(
-                        name="successMessage",
-                        in_=openapi.IN_BODY,
-                        type=openapi.TYPE_STRING,
-                    ),
-                    "errorMessage": Schema(
-                        name="errorMessage",
-                        in_=openapi.IN_BODY,
-                        type=openapi.TYPE_STRING,
-                    ),
-                },
-            ),
-            "default": Schema(
-                title="Clear-Server-Caches Response",
-                type=openapi.TYPE_OBJECT,
-                properties={
-                    "successMessage": Schema(
-                        name="successMessage",
-                        in_=openapi.IN_BODY,
-                        type=openapi.TYPE_STRING,
-                    ),
-                    "errorMessage": Schema(
-                        name="errorMessage",
-                        in_=openapi.IN_BODY,
-                        type=openapi.TYPE_STRING,
-                    ),
-                },
-            ),
-        },
-    )
+    @extend_schema(responses={200: ResponseData})
     def get(self, _):
         try:
             get_redis_connection("default").flushall()
+            data = ResponseData(successMessage="Server caches cleared Successfully.")
             return Response(
-                data={
-                    "successMessage": "Server caches cleared Successfully.",
-                    "errorMessage": None,
-                },
+                data=data.model_dump(),
                 status=status.HTTP_200_OK,
                 content_type="application/json",
             )

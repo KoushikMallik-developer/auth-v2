@@ -1,9 +1,7 @@
 import logging
 
+from drf_spectacular.utils import extend_schema
 from psycopg2 import DatabaseError
-from drf_yasg import openapi
-from drf_yasg.openapi import Schema
-from drf_yasg.utils import swagger_auto_schema
 from pydantic import ValidationError
 from rest_framework import serializers, status
 from rest_framework.renderers import JSONRenderer
@@ -20,6 +18,7 @@ from api.auth_exceptions.user_exceptions import (
 from api.models.request_data_types.update_seller_details import (
     UpdateSellerDetailsRequestType,
 )
+from api.models.response_data_types.response_data import ResponseData
 from api.services.helpers import decode_jwt_token, validate_user_uid
 from api.services.seller_services.seller_services import SellerServices
 
@@ -27,125 +26,8 @@ from api.services.seller_services.seller_services import SellerServices
 class UpdateSellerProfileView(APIView):
     renderer_classes = [JSONRenderer]
 
-    @swagger_auto_schema(
-        operation_summary="Update Seller Details",
-        operation_description="Update Seller Details",
-        request_body=Schema(
-            title="Update-Seller-Profile Request",
-            type=openapi.TYPE_OBJECT,
-            properties={
-                "fname": Schema(
-                    name="fname",
-                    in_=openapi.IN_BODY,
-                    type=openapi.TYPE_STRING,
-                ),
-                "lname": Schema(
-                    name="lname",
-                    in_=openapi.IN_BODY,
-                    type=openapi.TYPE_STRING,
-                ),
-                "phone": Schema(
-                    name="phone",
-                    in_=openapi.IN_BODY,
-                    type=openapi.TYPE_STRING,
-                ),
-                "company_name": Schema(
-                    name="company_name",
-                    in_=openapi.IN_BODY,
-                    type=openapi.TYPE_STRING,
-                ),
-                "image": Schema(
-                    name="image",
-                    in_=openapi.IN_BODY,
-                    type=openapi.TYPE_STRING,
-                ),
-                "bio": Schema(
-                    name="bio",
-                    in_=openapi.IN_BODY,
-                    type=openapi.TYPE_STRING,
-                ),
-                "website": Schema(
-                    name="website",
-                    in_=openapi.IN_BODY,
-                    type=openapi.TYPE_STRING,
-                ),
-                "address_line1": Schema(
-                    name="address_line1",
-                    in_=openapi.IN_BODY,
-                    type=openapi.TYPE_STRING,
-                ),
-                "address_line2": Schema(
-                    name="address_line2",
-                    in_=openapi.IN_BODY,
-                    type=openapi.TYPE_STRING,
-                ),
-                "state": Schema(
-                    name="state",
-                    in_=openapi.IN_BODY,
-                    type=openapi.TYPE_STRING,
-                ),
-                "city": Schema(
-                    name="city",
-                    in_=openapi.IN_BODY,
-                    type=openapi.TYPE_STRING,
-                ),
-                "pin": Schema(
-                    name="pin",
-                    in_=openapi.IN_BODY,
-                    type=openapi.TYPE_STRING,
-                ),
-                "country": Schema(
-                    name="country",
-                    in_=openapi.IN_BODY,
-                    type=openapi.TYPE_STRING,
-                ),
-                "landmark": Schema(
-                    name="landmark",
-                    in_=openapi.IN_BODY,
-                    type=openapi.TYPE_STRING,
-                ),
-                "dob": Schema(
-                    name="dob",
-                    in_=openapi.IN_BODY,
-                    type=openapi.TYPE_STRING,
-                    format=openapi.FORMAT_DATE,
-                ),
-            },
-        ),
-        responses={
-            200: Schema(
-                title="Update-Seller-Profile Response",
-                type=openapi.TYPE_OBJECT,
-                properties={
-                    "successMessage": Schema(
-                        name="successMessage",
-                        in_=openapi.IN_BODY,
-                        type=openapi.TYPE_STRING,
-                    ),
-                    "errorMessage": Schema(
-                        name="errorMessage",
-                        in_=openapi.IN_BODY,
-                        type=openapi.TYPE_STRING,
-                    ),
-                },
-            ),
-            "default": Schema(
-                title="Update-Seller-Profile Response",
-                type=openapi.TYPE_OBJECT,
-                properties={
-                    "successMessage": Schema(
-                        name="successMessage",
-                        in_=openapi.IN_BODY,
-                        type=openapi.TYPE_STRING,
-                    ),
-                    "errorMessage": Schema(
-                        name="errorMessage",
-                        in_=openapi.IN_BODY,
-                        type=openapi.TYPE_STRING,
-                    ),
-                },
-            ),
-        },
+    @extend_schema(
+        request=UpdateSellerDetailsRequestType, responses={200: ResponseData}
     )
     def post(self, request):
         try:
@@ -156,11 +38,11 @@ class UpdateSellerProfileView(APIView):
                     uid=user_id,
                     request_data=request_data,
                 )
+                data = ResponseData(
+                    successMessage="Seller details updated Successfully."
+                )
                 return Response(
-                    data={
-                        "successMessage": "Seller details updated Successfully.",
-                        "errorMessage": None,
-                    },
+                    data=data.model_dump(),
                     status=status.HTTP_200_OK,
                     content_type="application/json",
                 )

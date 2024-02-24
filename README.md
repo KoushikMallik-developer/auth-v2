@@ -35,7 +35,7 @@ Now install all the dependencies in auth-env.
   pip install -r .\dependencies\dev-requirements.txt
 ```
 Go to project directory.
-
+ 
 ```bash
   cd auth
 ```

@@ -1,9 +1,7 @@
 import logging
 
+from drf_spectacular.utils import extend_schema
 from psycopg2 import DatabaseError
-from drf_yasg import openapi
-from drf_yasg.openapi import Schema
-from drf_yasg.utils import swagger_auto_schema
 from pydantic import ValidationError
 from rest_framework import serializers, status
 from rest_framework.renderers import JSONRenderer
@@ -17,6 +15,7 @@ from api.auth_exceptions.user_exceptions import (
     UserNotFoundError,
     UserNotVerifiedError,
 )
+from api.models.response_data_types.seller_details import SellerDetailsResponseData
 from api.services.helpers import decode_jwt_token, validate_user_uid
 from api.services.seller_services.seller_services import SellerServices
 from api.views.helpers import is_seller_account
@@ -25,61 +24,19 @@ from api.views.helpers import is_seller_account
 class SellerDetailView(APIView):
     renderer_classes = [JSONRenderer]
 
-    @swagger_auto_schema(
-        operation_summary="Get Seller Details",
-        operation_description="Get Seller Details",
-        responses={
-            200: Schema(
-                title="Get-Seller-Details Response",
-                type=openapi.TYPE_OBJECT,
-                properties={
-                    "successMessage": Schema(
-                        name="successMessage",
-                        in_=openapi.IN_BODY,
-                        type=openapi.TYPE_STRING,
-                    ),
-                    "data": Schema(
-                        name="successMessage",
-                        in_=openapi.IN_BODY,
-                        type=openapi.TYPE_OBJECT,
-                    ),
-                    "errorMessage": Schema(
-                        name="errorMessage",
-                        in_=openapi.IN_BODY,
-                        type=openapi.TYPE_STRING,
-                    ),
-                },
-            ),
-            "default": Schema(
-                title="Get-Seller-Details Response",
-                type=openapi.TYPE_OBJECT,
-                properties={
-                    "successMessage": Schema(
-                        name="successMessage",
-                        in_=openapi.IN_BODY,
-                        type=openapi.TYPE_STRING,
-                    ),
-                    "errorMessage": Schema(
-                        name="errorMessage",
-                        in_=openapi.IN_BODY,
-                        type=openapi.TYPE_STRING,
-                    ),
-                },
-            ),
-        },
-    )
+    @extend_schema(responses={200: SellerDetailsResponseData})
     def get(self, request):
         try:
             user_id = decode_jwt_token(request=request)
             if validate_user_uid(uid=user_id).is_validated:
                 if is_seller_account(uid=user_id):
                     seller_details = SellerServices().get_seller_details(uid=user_id)
+                    data = SellerDetailsResponseData(
+                        successMessage="Seller details fetched Successfully.",
+                        data=seller_details.model_dump(),
+                    )
                     return Response(
-                        data={
-                            "successMessage": "Seller details fetched Successfully.",
-                            "data": seller_details.model_dump(),
-                            "errorMessage": None,
-                        },
+                        data=data.model_dump(),
                         status=status.HTTP_200_OK,
                         content_type="application/json",
                     )

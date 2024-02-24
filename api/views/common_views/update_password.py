@@ -1,9 +1,7 @@
 import logging
 
+from drf_spectacular.utils import extend_schema
 from psycopg2 import DatabaseError
-from drf_yasg import openapi
-from drf_yasg.openapi import Schema
-from drf_yasg.utils import swagger_auto_schema
 from pydantic import ValidationError
 from rest_framework import status, serializers
 from rest_framework.renderers import JSONRenderer
@@ -18,6 +16,8 @@ from api.auth_exceptions.user_exceptions import (
     UserNotVerifiedError,
 )
 from api.models.request_data_types.change_password import ChangePasswordRequestType
+from api.models.request_data_types.update_password import UpdatePasswordRequestType
+from api.models.response_data_types.response_data import ResponseData
 from api.services.helpers import validate_user_uid, decode_jwt_token
 from api.services.user_services.user_services import UserServices
 
@@ -25,62 +25,7 @@ from api.services.user_services.user_services import UserServices
 class UpdatePasswordView(APIView):
     renderer_classes = [JSONRenderer]
 
-    @swagger_auto_schema(
-        operation_summary="Update User Password",
-        operation_description="Update User Password",
-        request_body=Schema(
-            title="Update-Password Request",
-            type=openapi.TYPE_OBJECT,
-            properties={
-                "password1": Schema(
-                    name="password1",
-                    in_=openapi.IN_BODY,
-                    type=openapi.TYPE_STRING,
-                    format=openapi.FORMAT_PASSWORD,
-                ),
-                "password2": Schema(
-                    name="password2",
-                    in_=openapi.IN_BODY,
-                    type=openapi.TYPE_STRING,
-                    format=openapi.FORMAT_PASSWORD,
-                ),
-            },
-        ),
-        responses={
-            200: Schema(
-                title="Update-Password Response",
-                type=openapi.TYPE_OBJECT,
-                properties={
-                    "successMessage": Schema(
-                        name="successMessage",
-                        in_=openapi.IN_BODY,
-                        type=openapi.TYPE_STRING,
-                    ),
-                    "errorMessage": Schema(
-                        name="errorMessage",
-                        in_=openapi.IN_BODY,
-                        type=openapi.TYPE_STRING,
-                    ),
-                },
-            ),
-            "default": Schema(
-                title="Update-Password Response",
-                type=openapi.TYPE_OBJECT,
-                properties={
-                    "successMessage": Schema(
-                        name="successMessage",
-                        in_=openapi.IN_BODY,
-                        type=openapi.TYPE_STRING,
-                    ),
-                    "errorMessage": Schema(
-                        name="errorMessage",
-                        in_=openapi.IN_BODY,
-                        type=openapi.TYPE_STRING,
-                    ),
-                },
-            ),
-        },
-    )
+    @extend_schema(request=UpdatePasswordRequestType, responses={200: ResponseData})
     def post(self, request):
         try:
             user_id = decode_jwt_token(request=request)
@@ -88,11 +33,9 @@ class UpdatePasswordView(APIView):
                 UserServices().change_password(
                     uid=user_id, request_data=ChangePasswordRequestType(**request.data)
                 )
+                data = ResponseData(successMessage="Password Changed Successfully.")
                 return Response(
-                    data={
-                        "successMessage": "Password Changed Successfully.",
-                        "errorMessage": None,
-                    },
+                    data=data.model_dump(),
                     status=status.HTTP_200_OK,
                     content_type="application/json",
                 )
