@@ -16,7 +16,7 @@ from api.auth_exceptions.user_exceptions import (
     UserAuthenticationFailedError,
 )
 from api.models.request_data_types.sign_in import SignInRequestType
-from api.models.response_data_types.sign_in import SignInResponseData
+from api.models.response_data_types.sign_in import SignInResponseData, VerificationToken
 from api.services.user_services.user_services import UserServices
 
 
@@ -35,7 +35,10 @@ class SignInView(APIView):
                     request_data=SignInRequestType(**request_data)
                 )
                 if result.get("token"):
-                    data = SignInResponseData(token=result.get("token"))
+                    data = SignInResponseData(
+                        token=VerificationToken(**result.get("token"))
+                    )
+
                     return Response(
                         data=data.model_dump(),
                         status=status.HTTP_200_OK,
