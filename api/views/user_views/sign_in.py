@@ -1,9 +1,7 @@
 import logging
 
+from drf_spectacular.utils import extend_schema
 from psycopg2 import DatabaseError
-
-# from drf_yasg import openapi
-# from drf_yasg.openapi import Schema
 from pydantic import ValidationError
 from rest_framework import status, serializers
 from rest_framework.renderers import JSONRenderer
@@ -18,70 +16,14 @@ from api.auth_exceptions.user_exceptions import (
     UserAuthenticationFailedError,
 )
 from api.models.request_data_types.sign_in import SignInRequestType
+from api.models.response_data_types.sign_in import SignInResponseData
 from api.services.user_services.user_services import UserServices
-
-# from drf_yasg.utils import swagger_auto_schema
 
 
 class SignInView(APIView):
     renderer_classes = [JSONRenderer]
 
-    # @swagger_auto_schema(
-    #     operation_summary="Sign In User",
-    #     operation_description="Sign In User",
-    #     request_body=Schema(
-    #         title="Sign-In Request",
-    #         type=openapi.TYPE_OBJECT,
-    #         properties={
-    #             "email": Schema(
-    #                 name="email",
-    #                 in_=openapi.IN_BODY,
-    #                 type=openapi.TYPE_STRING,
-    #                 format=openapi.FORMAT_EMAIL,
-    #             ),
-    #             "password": Schema(
-    #                 name="password",
-    #                 in_=openapi.IN_BODY,
-    #                 type=openapi.TYPE_STRING,
-    #                 format=openapi.FORMAT_PASSWORD,
-    #             ),
-    #         },
-    #     ),
-    #     responses={
-    #         200: Schema(
-    #             title="Sign-In Response",
-    #             type=openapi.TYPE_OBJECT,
-    #             properties={
-    #                 "token": Schema(
-    #                     name="token",
-    #                     in_=openapi.IN_BODY,
-    #                     type=openapi.TYPE_OBJECT,
-    #                 ),
-    #                 "errorMessage": Schema(
-    #                     name="errorMessage",
-    #                     in_=openapi.IN_BODY,
-    #                     type=openapi.TYPE_STRING,
-    #                 ),
-    #             },
-    #         ),
-    #         "default": Schema(
-    #             title="Sign-In Response",
-    #             type=openapi.TYPE_OBJECT,
-    #             properties={
-    #                 "successMessage": Schema(
-    #                     name="successMessage",
-    #                     in_=openapi.IN_BODY,
-    #                     type=openapi.TYPE_STRING,
-    #                 ),
-    #                 "errorMessage": Schema(
-    #                     name="errorMessage",
-    #                     in_=openapi.IN_BODY,
-    #                     type=openapi.TYPE_STRING,
-    #                 ),
-    #             },
-    #         ),
-    #     },
-    # )
+    @extend_schema(request=SignInRequestType, responses={200: SignInResponseData})
     def post(self, request: Request):
         try:
             request_data = request.data
@@ -93,8 +35,9 @@ class SignInView(APIView):
                     request_data=SignInRequestType(**request_data)
                 )
                 if result.get("token"):
+                    data = SignInResponseData(token=result.get("token"))
                     return Response(
-                        data={"token": result.get("token"), "errorMessage": None},
+                        data=data.model_dump(),
                         status=status.HTTP_200_OK,
                         content_type="application/json",
                     )
