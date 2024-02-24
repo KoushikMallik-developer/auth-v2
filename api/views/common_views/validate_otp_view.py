@@ -14,7 +14,7 @@ from api.auth_exceptions.user_exceptions import (
     EmailNotSentError,
 )
 from api.models.request_data_types.verify_otp import VerifyOTPRequestType
-from api.models.response_data_types.sign_in import SignInResponseData
+from api.models.response_data_types.sign_in import SignInResponseData, VerificationToken
 from api.services.user_services.user_services import UserServices
 
 
@@ -27,7 +27,7 @@ class ValidateOTPView(APIView):
             token = UserServices().verify_user_with_otp(
                 request_data=VerifyOTPRequestType(**request.data)
             )
-            data = SignInResponseData(token=token)
+            data = SignInResponseData(token=VerificationToken(**token))
             return Response(
                 data=data.model_dump(),
                 status=status.HTTP_200_OK,
