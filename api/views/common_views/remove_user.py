@@ -8,12 +8,8 @@ from rest_framework.renderers import JSONRenderer
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from api.auth_exceptions.user_exceptions import (
-    UserNotFoundError,
-    EmailNotSentError,
-    UserAuthenticationFailedError,
-    UserNotVerifiedError,
-)
+from api.auth_exceptions.base_exception import AUTHBaseException
+from api.auth_exceptions.user_exceptions import UserNotFoundError
 from api.models.request_data_types.remove_user import RemoveUserRequestType
 from api.models.response_data_types.response_data import ResponseData
 from api.models.user_models.user import ECOMUser
@@ -61,42 +57,42 @@ class RemoveUserView(APIView):
                 status=status.HTTP_500_INTERNAL_SERVER_ERROR,
                 content_type="application/json",
             )
-        except EmailNotSentError as e:
+        # except EmailNotSentError as e:
+        #     return Response(
+        #         data={
+        #             "successMessage": None,
+        #             "errorMessage": f"EmailNotSentError: {e.msg}",
+        #         },
+        #         status=status.HTTP_500_INTERNAL_SERVER_ERROR,
+        #         content_type="application/json",
+        #     )
+        # except UserAuthenticationFailedError as e:
+        #     return Response(
+        #         data={
+        #             "successMessage": None,
+        #             "errorMessage": f"UserAuthenticationFailedError: {e.msg}",
+        #         },
+        #         status=status.HTTP_500_INTERNAL_SERVER_ERROR,
+        #         content_type="application/json",
+        #     )
+        except AUTHBaseException as e:
             return Response(
                 data={
                     "successMessage": None,
-                    "errorMessage": f"EmailNotSentError: {e.msg}",
+                    "errorMessage": f"{e.name}: {e.msg}",
                 },
-                status=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                status=e.status,
                 content_type="application/json",
             )
-        except UserAuthenticationFailedError as e:
-            return Response(
-                data={
-                    "successMessage": None,
-                    "errorMessage": f"UserAuthenticationFailedError: {e.msg}",
-                },
-                status=status.HTTP_500_INTERNAL_SERVER_ERROR,
-                content_type="application/json",
-            )
-        except UserNotFoundError as e:
-            return Response(
-                data={
-                    "successMessage": None,
-                    "errorMessage": f"UserNotFoundError: {e.msg}",
-                },
-                status=status.HTTP_401_UNAUTHORIZED,
-                content_type="application/json",
-            )
-        except UserNotVerifiedError as e:
-            return Response(
-                data={
-                    "successMessage": None,
-                    "errorMessage": f"UserNotVerifiedError: {e.msg}",
-                },
-                status=status.HTTP_401_UNAUTHORIZED,
-                content_type="application/json",
-            )
+        # except UserNotVerifiedError as e:
+        #     return Response(
+        #         data={
+        #             "successMessage": None,
+        #             "errorMessage": f"UserNotVerifiedError: {e.msg}",
+        #         },
+        #         status=status.HTTP_401_UNAUTHORIZED,
+        #         content_type="application/json",
+        #     )
         except serializers.ValidationError as e:
             logging.warning(f"SerializerValidationError: {e.detail}")
             return Response(
