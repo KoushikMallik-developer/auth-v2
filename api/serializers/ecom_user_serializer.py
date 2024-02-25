@@ -1,6 +1,7 @@
 from typing import Optional
 from rest_framework import serializers
 
+from api.auth_exceptions.ecom_exception import EcomValidationError
 from api.models.definitions import ACCOUNT_TYPE_CHOICES
 from api.models.user_models.user import ECOMUser
 from api.models.export_types.validation_types.validation_result import ValidationResult
@@ -35,42 +36,30 @@ class ECOMUserSerializer(serializers.ModelSerializer):
         password2 = data.get("password2")
 
         # Email Validation
-        if email and isinstance(email, str):
-            validation_result_email: ValidationResult = validate_email(email)
-            is_validated_email = validation_result_email.is_validated
-            if not is_validated_email:
-                raise serializers.ValidationError(detail=validation_result_email.error)
+
+        validation_result_email: ValidationResult = validate_email(email)
+        is_validated_email = validation_result_email.is_validated
+        if not is_validated_email:
+            raise EcomValidationError(msg=validation_result_email.error)
 
         # Name and Username Validation
-        if (
-            fname
-            and lname
-            and username
-            and isinstance(fname, str)
-            and isinstance(lname, str)
-            and isinstance(username, str)
-        ):
-            validation_result_name: ValidationResult = validate_name(fname + lname)
-            is_validated_name = validation_result_name.is_validated
-            if not is_validated_name:
-                raise serializers.ValidationError(detail=validation_result_name.error)
-            validation_result_username: ValidationResult = validate_username(username)
-            is_validated_username = validation_result_username.is_validated
-            if not is_validated_username:
-                raise serializers.ValidationError(validation_result_username.error)
+
+        validation_result_name: ValidationResult = validate_name(fname + lname)
+        is_validated_name = validation_result_name.is_validated
+        if not is_validated_name:
+            raise EcomValidationError(msg=validation_result_name.error)
+        validation_result_username: ValidationResult = validate_username(username)
+        is_validated_username = validation_result_username.is_validated
+        if not is_validated_username:
+            raise EcomValidationError(msg=validation_result_username.error)
         # Password Validation
-        if (
-            password1
-            and password2
-            and isinstance(password1, str)
-            and isinstance(password2, str)
-        ):
-            validation_result_password: ValidationResult = validate_password(
-                password1, password2
-            )
-            is_validated_password = validation_result_password.is_validated
-            if not is_validated_password:
-                raise serializers.ValidationError(validation_result_password.error)
+
+        validation_result_password: ValidationResult = validate_password(
+            password1, password2
+        )
+        is_validated_password = validation_result_password.is_validated
+        if not is_validated_password:
+            raise EcomValidationError(msg=validation_result_password.error)
 
         # Account Type Validation
         if account_type and isinstance(account_type, str):
@@ -80,18 +69,16 @@ class ECOMUserSerializer(serializers.ModelSerializer):
                     is_validated_gstin = validation_result_gstin.is_validated
                     is_validated_account_type = is_validated_gstin
                     if not is_validated_gstin:
-                        raise serializers.ValidationError(validation_result_gstin.error)
+                        raise EcomValidationError(msg=validation_result_gstin.error)
                 else:
-                    raise serializers.ValidationError(
-                        "GSTIN Number is needed for Seller type account."
+                    raise EcomValidationError(
+                        msg="GSTIN Number is needed for Seller type account."
                     )
             elif account_type in ACCOUNT_TYPE_CHOICES:
                 is_validated_account_type = True
                 is_validated_gstin = True
             else:
-                raise serializers.ValidationError(
-                    "AccountType entered is not supported."
-                )
+                raise EcomValidationError(msg="AccountType entered is not supported.")
         else:
             is_validated_account_type = True
             is_validated_gstin = True
@@ -105,6 +92,7 @@ class ECOMUserSerializer(serializers.ModelSerializer):
             and is_validated_account_type
         ):
             return True
+        return False
 
     def create(self, data: dict) -> ECOMUser:
         email = data.get("email")

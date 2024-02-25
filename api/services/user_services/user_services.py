@@ -3,6 +3,7 @@ from typing import Optional
 from dotenv import load_dotenv
 from psycopg2 import DatabaseError
 
+from api.auth_exceptions.ecom_exception import EcomValueError
 from api.auth_exceptions.user_exceptions import (
     EmailNotSentError,
     UserNotFoundError,
@@ -121,7 +122,9 @@ class UserServices:
             user.password = EncryptionServices().encrypt(request_data.password1)
             user.save()
         else:
-            raise ValueError("Passwords are not matching or not in correct format.")
+            raise EcomValueError(
+                msg="Passwords are not matching or not in correct format."
+            )
 
     @staticmethod
     def update_user_profile(uid: str, request_data: UpdateUserProfileRequestType):
@@ -173,7 +176,7 @@ class UserServices:
                 id=address_uid, user__id=uid
             )
         else:
-            raise ValueError("Address not found.")
+            raise EcomValueError(msg="Address not found.")
         address_line1 = request_data.address_line1
         address_line2 = request_data.address_line2
         state = request_data.state
@@ -208,7 +211,7 @@ class UserServices:
             if pincode_validation_result.is_validated:
                 address.pin = pin
             else:
-                raise ValueError(pincode_validation_result.error)
+                raise EcomValueError(msg=pincode_validation_result.error)
         if landmark and landmark != "" and isinstance(landmark, str):
             address.landmark = landmark
         if address_type and address_type != "" and isinstance(address_type, str):
@@ -224,7 +227,7 @@ class UserServices:
             if validate_phone(phone=delivery_to_phone).is_validated:
                 address.delivery_to_phone = delivery_to_phone
             else:
-                raise ValueError("Phone Number is not valid.")
+                raise EcomValueError(msg="Phone Number is not valid.")
         if (
             delivery_to_person_name
             and delivery_to_person_name != ""
@@ -268,7 +271,7 @@ class UserServices:
             if pincode_validation_result.is_validated:
                 address.pin = pin
             else:
-                raise ValueError(pincode_validation_result.error)
+                raise EcomValueError(msg=pincode_validation_result.error)
         if landmark and landmark != "" and isinstance(landmark, str):
             address.landmark = landmark
         if address_type and address_type != "" and isinstance(address_type, str):
@@ -284,7 +287,7 @@ class UserServices:
             if validate_phone(phone=delivery_to_phone).is_validated:
                 address.delivery_to_phone = delivery_to_phone
             else:
-                raise ValueError("Phone Number is not valid.")
+                raise EcomValueError(msg="Phone Number is not valid.")
         if (
             delivery_to_person_name
             and delivery_to_person_name != ""
@@ -302,7 +305,7 @@ class UserServices:
         ):
             address.save()
         else:
-            raise ValueError("Address details are not valid.")
+            raise EcomValueError(msg="Address details are not valid.")
 
     @staticmethod
     def get_user_details(uid: str) -> ExportECOMUser:
@@ -336,7 +339,7 @@ class UserServices:
             else:
                 raise UserNotFoundError()
         else:
-            raise ValueError("Email & OTP data are invalid.")
+            raise EcomValueError(msg="Email & OTP data are invalid.")
 
     def handle_default_address_update(self):
         # TODO: Need to update this method to handle the default address update.

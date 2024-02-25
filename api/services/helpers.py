@@ -3,9 +3,11 @@ import re
 from datetime import datetime
 
 import dns
+from dns.resolver import NXDOMAIN, LifetimeTimeout, YXDOMAIN, NoAnswer, NoNameservers
 from dotenv import load_dotenv
 from rest_framework_simplejwt.tokens import AccessToken
 
+from api.auth_exceptions.ecom_exception import EcomDomainDoesNotExistError
 from api.models.user_models.user import ECOMUser
 from api.models.export_types.validation_types.validation_result import ValidationResult
 from api.services.definitions import EnvironmentSettings
@@ -56,11 +58,15 @@ def validate_email_format(email: str) -> bool:
     regex = r"\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,7}\b"
     if re.fullmatch(regex, email):
         if get_environment() != "DEV":
-            domain = email.split("@")[1]
-            result = dns.resolver.resolve(domain, "MX")
+            try:
+                domain = email.split("@")[1]
+                result = dns.resolver.resolve(domain, "MX")
+            except (NXDOMAIN, LifetimeTimeout, YXDOMAIN, NoAnswer, NoNameservers):
+                raise EcomDomainDoesNotExistError()
             if result:
                 return True
-            return False
+            else:
+                return False
         else:
             return True
     else:
